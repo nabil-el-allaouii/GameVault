@@ -1,0 +1,155 @@
+/* Dashboard Styles */
+
+/* General Styles */
+body {
+    font-family: "Mulish", sans-serif;
+    background: #0b0c2a;
+    color: #ffffff;
+    margin: 0;
+    padding: 0;
+}
+
+.header {
+    background: #070720;
+    padding: 20px 0;
+}
+
+.sidebar {
+    background: #1a1a2e;
+    padding: 20px;
+    width: 250px;
+    /* Fixed width for the sidebar */
+    height: calc(100vh - 80px);
+    /* Full height minus header/footer */
+    /* Fixed sidebar */
+    overflow-y: auto;
+    /* Scroll if content overflows */
+}
+
+.sidebar nav ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar nav ul li {
+    margin: 15px 0;
+}
+
+.sidebar nav ul li a {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 700;
+    display: block;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.sidebar nav ul li a:hover {
+    background: #e53637;
+    /* Highlight on hover */
+}
+
+.dashboard {
+    display: flex;
+    /* Leave space for the sidebar */
+}
+
+.main-content {
+    padding: 20px;
+    width: calc(100% - 250px);
+    /* Adjust width accordingly */
+    background: #0b0c2a;
+    /* Match background */
+    height: calc(100vh - 80px);
+    /* Full height minus header/footer */
+    overflow-y: auto;
+    /* Scroll if content overflows */
+}
+
+.library,
+.profile,
+.game-details {
+    background: #1a1a2e;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.library h2,
+.profile h2,
+.game-details h2 {
+    color: #e53637;
+}
+
+.library table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.library th,
+.library td {
+    border: 1px solid #444;
+    padding: 10px;
+    text-align: left;
+}
+
+.library th {
+    background-color: #e53637;
+    color: #ffffff;
+}
+
+.add-game-btn {
+    background: #e53637;
+    color: #ffffff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.add-game-btn:hover {
+    background: #d52c2c;
+}
+
+.profile form {
+    display: flex;
+    flex-direction: column;
+}
+
+.profile label {
+    margin: 10px 0 5px;
+}
+
+.profile input {
+    padding: 10px;
+    border: 1px solid #444;
+    border-radius: 5px;
+    background: #1a1a2e;
+    color: #ffffff;
+}
+
+.profile button {
+    background: #e53637;
+    color: #ffffff;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.profile button:hover {
+    background: #d52c2c;
+}
+
+.footer {
+    text-align: center;
+    padding: 10px 0;
+    background: #070720;
+    color: #ffffff;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
