@@ -1,3 +1,30 @@
+<?php
+require_once 'database.php';
+require_once 'classes.php';
+
+$login = new login();
+$msg_error = "";
+
+
+if(isset($_POST['login'])){
+    $email = htmlspecialchars(trim($_POST['email']));
+    $password = htmlspecialchars(trim($_POST['password']));
+        
+    if($login->login($email, $password)){
+    header('Location: dashboard.php');
+    exit();
+    } else {
+        $msg_error = $login->login_error; // Get the error message
+    }
+  
+}
+?>
+
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="zxx">
 
@@ -57,16 +84,16 @@
                 <div class="col-lg-6">
                     <div class="login__form">
                         <h3>Login</h3>
-                        <form action="#">
+                        <form action="login.php" method="post">
                             <div class="input__item">
-                                <input type="text" placeholder="Email address">
+                                <input type="text" name="email" placeholder="Email address">
                                 <span class="icon_mail"></span>
                             </div>
                             <div class="input__item">
-                                <input type="text" placeholder="Password">
+                                <input type="password" name="password" placeholder="Password">
                                 <span class="icon_lock"></span>
                             </div>
-                            <button type="submit" class="site-btn">Login Now</button>
+                            <button type="submit" name="login" class="site-btn">Login Now</button>
                         </form>
                         <a href="#" class="forget_pass">Forgot Your Password?</a>
                     </div>
@@ -78,6 +105,12 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Display error message -->
+            <?php if (!empty($msg_error)): ?>
+                <p style="color: red;"><?= htmlspecialchars($msg_error); ?></p>
+            <?php endif; ?>
+
             <div class="login__social">
                 <div class="row d-flex justify-content-center">
                     <div class="col-lg-6">

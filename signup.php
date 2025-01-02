@@ -1,3 +1,31 @@
+<?php
+require_once 'database.php';
+require_once 'classes.php';
+
+$register = new register();
+$msg_error = "";
+
+if(isset($_POST['register'])){
+    $username = htmlspecialchars(trim($_POST['username']));
+    $email = htmlspecialchars(trim($_POST['email']));
+    $password = htmlspecialchars(trim($_POST['password']));
+    $confirmPassword = htmlspecialchars(trim($_POST['confirmPassword']));
+        
+    if ($register->registerUser($username, $email, $password, $confirmPassword)) {
+        header('Location: login.php');
+        exit();
+    } else {
+        $msg_error = $register->register_error;
+    }
+}
+?>
+
+
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="zxx">
 
@@ -57,23 +85,35 @@
                 <div class="col-lg-6">
                     <div class="login__form">
                         <h3>Sign Up</h3>
-                        <form action="#">
+                        
+                          <!-- Display error message -->
+                    <?php if (!empty($msg_error)): ?>
+                        <p style="color: red;"><?= htmlspecialchars($msg_error); ?></p>
+                    <?php endif; ?>
+
+                        <form action="signup.php" method="post">
                             <div class="input__item">
-                                <input type="text" placeholder="Email address">
+                                <input type="text" name="email" placeholder="Email address">
                                 <span class="icon_mail"></span>
                             </div>
                             <div class="input__item">
-                                <input type="text" placeholder="Your Name">
+                                <input type="text" name="username" placeholder="Your Name">
                                 <span class="icon_profile"></span>
                             </div>
                             <div class="input__item">
-                                <input type="text" placeholder="Password">
+                                <input type="password"" name="password" placeholder="Password">
                                 <span class="icon_lock"></span>
                             </div>
-                            <button type="submit" class="site-btn">Login Now</button>
+                            <div class="input__item">
+                                <input type="password" name="confirmPassword" placeholder="confirm Password">
+                                <span class="icon_lock"></span>
+                            </div>
+                            <button type="submit" name="register" class="site-btn">Register</button>
                         </form>
                         <h5>Already have an account? <a href="login.php">Log In!</a></h5>
                     </div>
+
+
                 </div>
                 <div class="col-lg-6">
                     <div class="login__social__links">
