@@ -1,3 +1,8 @@
+<?php 
+require 'database.php';
+require 'classes.php';
+
+?>
 
 <header class="header">
         <div class="container">
@@ -30,7 +35,13 @@
                 <div class="col-lg-2">
                     <div class="header__right">
                         <a href="#" class="search-switch"><span class="icon_search"></span></a>
-                        <a href="./login.php"><span class="icon_profile"></span></a>
+                        <?php 
+                            if(isset($_SESSION['username'])){
+                                echo '<a href="./dashboard.php"><span class="icon_profile"></span></a>';
+                            }else{
+                                echo '<a href="./login.php"><span class="icon_profile"></span></a>';
+                            }
+                        ?>
                     </div>
                 </div>
             </div>

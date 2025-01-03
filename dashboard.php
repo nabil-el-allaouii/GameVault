@@ -1,8 +1,5 @@
 <?php 
-    session_start();
-    if(!isset($_SESSION["username"])){
-        header("location: index.php");
-    }
+   
 ?>
 
 <!DOCTYPE html>
@@ -24,7 +21,11 @@
 </head>
 
 <body>
-    <?php include "header.php"; ?>
+    <?php include "header.php"; 
+        if(!isset($_SESSION["username"])){
+            header("location: index.php");
+        }
+    ?>
 
     <div class="dashboard">
         <aside class="sidebar" id="sidebar">
