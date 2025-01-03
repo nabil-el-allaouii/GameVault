@@ -7,17 +7,16 @@ $login = new login();
 $msg_error = "";
 
 
-if(isset($_POST['login'])){
+if (isset($_POST['login'])) {
     $email = htmlspecialchars(trim($_POST['email']));
     $password = htmlspecialchars(trim($_POST['password']));
-        
-    if($login->login($email, $password)){
-    header('Location: dashboard.php');
-    exit();
+
+    if ($login->login($email, $password)) {
+        header('Location: dashboard.php');
+        exit();
     } else {
         $msg_error = $login->login_error; // Get the error message
     }
-  
 }
 ?>
 
