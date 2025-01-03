@@ -1,7 +1,9 @@
 <?php 
-require 'database.php';
-require 'classes.php';
+require_once 'database.php';
+require_once 'classes.php';
 
+
+ 
 ?>
 
 <header class="header">

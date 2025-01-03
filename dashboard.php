@@ -1,6 +1,3 @@
-<?php 
-   
-?>
 
 <!DOCTYPE html>
 <html lang="zxx">
@@ -22,10 +19,10 @@
 
 <body>
     <?php include "header.php"; 
-        if(!isset($_SESSION["username"])){
-            header("location: index.php");
-        }
-    ?>
+     if(!isset($_SESSION["username"])){
+        header("location: index.php");
+    }?>
+    
 
     <div class="dashboard">
         <aside class="sidebar" id="sidebar">
