@@ -52,10 +52,6 @@ if (isset($_POST['login'])) {
 </head>
 
 <body>
-    <!-- Page Preloder -->
-    <div id="preloder">
-        <div class="loader"></div>
-    </div>
 
     <!-- Header Section Begin -->
     <?php include "header.php" ?>
