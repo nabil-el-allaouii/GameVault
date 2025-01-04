@@ -89,5 +89,42 @@ class login extends connection{
 
 
 
+class users extends connection {
+
+    private $username;
+    private $profilePic;
+    private $user_id;
+
+    public function __construct($username, $user_id , $profilePic)
+    {
+        parent::__construct();
+        $this->username = $username;
+        $this->user_id = $user_id;
+        $this->profilePic = $profilePic;
+    }
+
+
+    public function modify(){
+        $stmt = "UPDATE users SET username = :username , profile_pic = :profile_pic WHERE user_id = :userID";
+        $modifyquery = $this->conn->prepare($stmt);
+        $modifyquery->bindParam(":username", $this->username);
+        $modifyquery->bindParam(":userID" , $this->user_id);
+        $modifyquery->bindParam(":profile_pic" , $this->profilePic);
+        $modifyquery->execute();
+    }
+
+    public function getDefaultProfilePic($userID){
+        $stmt = "SELECT profile_pic from users where user_id = :user_id";
+        $GetDefaultPic = $this->conn->prepare($stmt);
+        $GetDefaultPic->bindParam(":user_id", $userID);
+        $GetDefaultPic->execute();
+        return $DefaultPic = $GetDefaultPic->fetchColumn();
+    }
+
+
+}
+
+
+
 
 ?>

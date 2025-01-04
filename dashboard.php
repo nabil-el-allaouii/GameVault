@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zxx">
 
@@ -18,11 +17,33 @@
 </head>
 
 <body>
-    <?php include "header.php"; 
-     if(!isset($_SESSION["username"])){
+    <?php
+    require_once "database.php";
+    include "header.php";
+    require_once "classes.php";
+
+    if (!isset($_SESSION["username"])) {
         header("location: index.php");
-    }?>
-    
+    }
+
+    if (isset($_POST['update_profile'])) {
+        $updated_username = $_POST['username'];
+        $updated_pic = $_POST['imageUpload'];
+        if (!empty($updated_pic)) {
+            $newModify = new users($updated_username, $_SESSION["user_id"], $updated_pic);
+            $newModify->modify();
+        } else {
+            $defaultPic = new users("", "", "");
+            $pic = $defaultPic->getDefaultProfilePic($_SESSION["user_id"]);
+            $newModify = new users($updated_username, $_SESSION["user_id"], $pic);
+            $newModify->modify();
+        }
+    }
+
+
+
+    ?>
+
 
     <div class="dashboard">
         <aside class="sidebar" id="sidebar">
@@ -58,16 +79,16 @@
             </div>
 
             <div id="profile" class="content-section" style="display: none;">
-                <h2>User Profile</h2>
-                <form>
-                    <label for="username">Username:</label>
-                    <input type="text" id="username" name="username" required>
-
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" required>
-
-                    <button type="submit">Update Profile</button>
-                </form>
+                <div class="profile-card">
+                    <h2>User Profile</h2>
+                    <form action="dashboard.php" method="post" enctype="multipart/form-data">
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                        <label for="imageUpload">Profile Picture:</label>
+                        <input type="text" id="imageUpload" name="imageUpload" placeholder="Enter image URL">
+                        <button type="submit" name="update_profile">Update Profile</button>
+                    </form>
+                </div>
             </div>
 
             <div id="game-details" class="content-section" style="display: none;">
