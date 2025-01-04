@@ -53,7 +53,7 @@
                     <li><a href="#" onclick="showSection('profile')">Profile</a></li>
                     <li><a href="#" onclick="showSection('game-details')">Game Details</a></li>
                     <li><a href="#">Chat</a></li>
-                    <li><a href="#">Logout</a></li>
+                    <li><a href="logout.php">Logout</a></li>
                 </ul>
             </nav>
         </aside>
