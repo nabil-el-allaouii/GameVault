@@ -2,11 +2,24 @@
 require_once 'database.php';
 require_once 'classes.php';
 
+$register = new Register();
 
+$profile_pic = "";
+if (isset($_SESSION['user_id'])) {
+    $profile_pic = $register->getProfilePic($_SESSION['user_id']);
+}
  
+
 ?>
 
 <header class="header">
+<style>
+    .profile-pic {
+        width: 35px;
+        height: 35px;
+      
+    }
+</style>
         <div class="container">
             <div class="row">
                 <div class="col-lg-2">
@@ -38,8 +51,8 @@ require_once 'classes.php';
                     <div class="header__right">
                         <a href="#" class="search-switch"><span class="icon_search"></span></a>
                         <?php 
-                            if(isset($_SESSION['username'])){
-                                echo '<a href="./dashboard.php"><span class="icon_profile"></span></a>';
+                            if(isset($_SESSION['username'])){                            
+                                echo '<a href="./dashboard.php"><img src="' . $profile_pic . '" alt="Profile Picture" class="profile-pic"></a>';
                             }else{
                                 echo '<a href="./login.php"><span class="icon_profile"></span></a>';
                             }
