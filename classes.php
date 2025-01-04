@@ -56,17 +56,6 @@ class register extends connection{
         }
     }
 
-    public function getProfilePic($user_id) {
-            $query = $this->conn->prepare("SELECT profile_pic FROM users WHERE user_id = :user_id");
-            $query->bindParam(':user_id', $user_id);
-            $query->execute();
-            $result = $query->fetch(PDO::FETCH_ASSOC);
-
-            if ($result && !empty($result['profile_pic'])) {
-                return $result['profile_pic'];
-            }
-            
-    }
 
 }
 

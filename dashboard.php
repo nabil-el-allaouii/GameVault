@@ -32,11 +32,13 @@
         if (!empty($updated_pic)) {
             $newModify = new users($updated_username, $_SESSION["user_id"], $updated_pic);
             $newModify->modify();
+            header("location: dashboard.php");
         } else {
             $defaultPic = new users("", "", "");
             $pic = $defaultPic->getDefaultProfilePic($_SESSION["user_id"]);
             $newModify = new users($updated_username, $_SESSION["user_id"], $pic);
             $newModify->modify();
+            header("location: dashboard.php");
         }
     }
 
