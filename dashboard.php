@@ -62,22 +62,62 @@
 
         <main class="main-content">
             <div id="library" class="content-section" style="display: none;">
-                <h2>Game Library</h2>
-                <p>Here you can manage your game library.</p>
-                <button class="add-game-btn">Add Game</button>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Title</th>
-                            <th>Status</th>
-                            <th>Rating</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Game entries will be dynamically generated here -->
-                    </tbody>
-                </table>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="trending__product">
+                                <div class="row">
+                                    <div class="col-lg-8 col-md-8 col-sm-8">
+                                        <div class="section-title">
+                                            <h4>Your Games</h4>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 col-md-4 col-sm-4">
+                                        <div class="btn__all">
+                                            <a href="#" class="primary-btn">View All <span class="arrow_right"></span></a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-4 col-md-6 col-sm-6">
+                                        <div class="product__item">
+                                            <div class="product__item__pic set-bg">
+                                                <img src="img/trending/trend-4.jpg" alt="">
+                                                <div class="ep">18 / 18</div>
+                                                <div class="comment"><i class="fa fa-comments"></i> 11</div>
+                                                <div class="view"><i class="fa fa-eye"></i> 9141</div>
+                                                <div class="game__details__overlay">
+                                                    <div class="game__stat">
+                                                        <i class="fa fa-star"></i>
+                                                        <span>Personal Score: 8.5/10</span>
+                                                    </div>
+                                                    <div class="game__stat">
+                                                        <i class="fa fa-clock-o"></i>
+                                                        <span>Playtime: 45h</span>
+                                                    </div>
+                                                    <div class="game__stat">
+                                                        <i class="fa fa-gamepad"></i>
+                                                        <span>Status: In Progress</span>
+                                                    </div>
+                                                    <button class="remove-game-btn">
+                                                        <i class="fa fa-trash"></i> Remove from Library
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="product__item__text">
+                                                <ul>
+                                                    <li>Active</li>
+                                                    <li>Movie</li>
+                                                </ul>
+                                                <h5><a href="#">Code Geass: Hangyaku no Lelouch R2</a></h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div id="profile" class="content-section" style="display: none;">
@@ -85,7 +125,8 @@
                     <h2>User Profile</h2>
                     <form action="dashboard.php" method="post" enctype="multipart/form-data">
                         <label for="username">Username:</label>
-                        <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                        <input type="text" id="username" name="username" placeholder="Enter your username" value="<?php $TheUser = new Rendering();
+                                                    $shownUser = $TheUser->showUser();?>" required>
                         <label for="imageUpload">Profile Picture:</label>
                         <input type="text" id="imageUpload" name="imageUpload" placeholder="Enter image URL">
                         <button type="submit" name="update_profile">Update Profile</button>
@@ -99,7 +140,8 @@
             </div>
 
             <div id="welcome" class="content-section">
-                <h2>Welcome to Your Dashboard</h2>
+                <h2>Welcome to Your Dashboard <?php $TheUser = new Rendering();
+                                                $shownUser = $TheUser->showUser();?></h2>
                 <p>Select an option from the sidebar to manage your games, update your profile, or view game details.</p>
             </div>
         </main>

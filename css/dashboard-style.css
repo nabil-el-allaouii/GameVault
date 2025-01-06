@@ -53,13 +53,22 @@ body {
 .main-content {
     padding: 20px;
     width: calc(100% - 250px);
-    /* Adjust width accordingly */
     background: #0b0c2a;
-    /* Match background */
     height: calc(100vh - 80px);
-    /* Full height minus header/footer */
-    overflow-y: auto;
-    /* Scroll if content overflows */
+    overflow-y: hidden;
+    /* Add these properties to center content */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+/* Add this to control the width of content sections */
+.content-section {
+    width: 100%;
+    max-width: 1200px;
+    /* Adjust this value as needed */
+    margin: 0 auto;
+    padding: 20px;
 }
 
 .library,
@@ -158,6 +167,7 @@ body {
     text-align: center;
     margin: 20px auto;
     width: 600px;
+    max-width: 600px;
 }
 
 .profile-card h2 {
