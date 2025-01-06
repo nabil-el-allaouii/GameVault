@@ -30,9 +30,13 @@
         $updated_username = $_POST['username'];
         $updated_pic = $_POST['imageUpload'];
         if (!empty($updated_pic)) {
-            $newModify = new users($updated_username, $_SESSION["user_id"], $updated_pic);
-            $newModify->modify();
-            header("location: dashboard.php");
+            if(strpos($updated_pic , ".png") !== false || strpos($updated_pic , ".jpg") !== false || strpos($updated_pic , ".jpeg") !== false){
+                $newModify = new users($updated_username, $_SESSION["user_id"], $updated_pic);
+                $newModify->modify();
+                header("location: dashboard.php");
+            }else{
+                header("location: dashboard.php?error= invalid image format");
+            }
         } else {
             $defaultPic = new users("", "", "");
             $pic = $defaultPic->getDefaultProfilePic($_SESSION["user_id"]);
@@ -78,42 +82,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-lg-4 col-md-6 col-sm-6">
-                                        <div class="product__item">
-                                            <div class="product__item__pic set-bg">
-                                                <img src="img/trending/trend-4.jpg" alt="">
-                                                <div class="ep">18 / 18</div>
-                                                <div class="comment"><i class="fa fa-comments"></i> 11</div>
-                                                <div class="view"><i class="fa fa-eye"></i> 9141</div>
-                                                <div class="game__details__overlay">
-                                                    <div class="game__stat">
-                                                        <i class="fa fa-star"></i>
-                                                        <span>Personal Score: 8.5/10</span>
-                                                    </div>
-                                                    <div class="game__stat">
-                                                        <i class="fa fa-clock-o"></i>
-                                                        <span>Playtime: 45h</span>
-                                                    </div>
-                                                    <div class="game__stat">
-                                                        <i class="fa fa-gamepad"></i>
-                                                        <span>Status: In Progress</span>
-                                                    </div>
-                                                    <button class="remove-game-btn">
-                                                        <i class="fa fa-trash"></i> Remove from Library
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div class="product__item__text">
-                                                <ul>
-                                                    <li>Active</li>
-                                                    <li>Movie</li>
-                                                </ul>
-                                                <h5><a href="#">Code Geass: Hangyaku no Lelouch R2</a></h5>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <?php $avail = new Rendering(); 
+                                      $showAv = $avail->showGames();  ?>
                             </div>
                         </div>
                     </div>
@@ -126,7 +96,7 @@
                     <form action="dashboard.php" method="post" enctype="multipart/form-data">
                         <label for="username">Username:</label>
                         <input type="text" id="username" name="username" placeholder="Enter your username" value="<?php $TheUser = new Rendering();
-                                                    $shownUser = $TheUser->showUser();?>" required>
+                                                                                                                    $shownUser = $TheUser->showUser(); ?>" required>
                         <label for="imageUpload">Profile Picture:</label>
                         <input type="text" id="imageUpload" name="imageUpload" placeholder="Enter image URL">
                         <button type="submit" name="update_profile">Update Profile</button>
@@ -141,7 +111,7 @@
 
             <div id="welcome" class="content-section">
                 <h2>Welcome to Your Dashboard <?php $TheUser = new Rendering();
-                                                $shownUser = $TheUser->showUser();?></h2>
+                                                $shownUser = $TheUser->showUser(); ?></h2>
                 <p>Select an option from the sidebar to manage your games, update your profile, or view game details.</p>
             </div>
         </main>

@@ -160,7 +160,8 @@ class Game extends connection
         $this->release_date = $release_date;
     }
 
-    public function createGame(){
+    public function createGame()
+    {
         //insert game details
         $stmt = "INSERT INTO game (game_title, game_pic, game_genre, game_description, game_release) 
                 VALUES (:title, :image, :genre, :description, :release_date)";
@@ -171,7 +172,7 @@ class Game extends connection
         $createGame->bindParam(":genre", $this->genre);
         $createGame->bindParam(":description", $this->description);
         $createGame->bindParam(":release_date", $this->release_date);
-       
+
         $createGame->execute();
 
         //get the last inserted game id
@@ -192,16 +193,62 @@ class Game extends connection
 }
 
 
-class Rendering extends connection {
-    public function showGames($user_ID){
+class Rendering extends connection
+{
+    public function showGames()
+    {
         $stmt = "SELECT * FROM game join user_library on user_id = :user_id";
         $ShowStmt = $this->conn->prepare($stmt);
-        $ShowStmt->bindParam(":user_id" , $user_ID);
+        $ShowStmt->bindParam(":user_id", $_SESSION["user_id"]);
         $ShowStmt->execute();
         $GamesShow = $ShowStmt->fetchAll();
+
+        if (is_array($GamesShow) && !empty($GamesShow)) {
+            foreach ($GamesShow as $game) {
+                echo "<div class='row'>
+                                    <div class='col-lg-4 col-md-6 col-sm-6'>
+                                        <div class='product__item'>
+                                            <div class='product__item__pic set-bg'>
+                                                <img src='{$game["game_pic"]}' alt=''>
+                                                <div class='ep'>18 / 18</div>
+                                                <div class='comment'><i class='fa fa-comments'></i> 11</div>
+                                                <div class='view'><i class='fa fa-eye'></i> 9141</div>
+                                                <div class='game__details__overlay'>
+                                                    <div class='game__stat'>
+                                                        <i class='fa fa-star'></i>
+                                                        <span>Personal Score: {$game["personal_score"]}/10</span>
+                                                    </div>
+                                                    <div class='game__stat'>
+                                                        <i class='fa fa-clock-o'></i>
+                                                        <span>Playtime: {$game["play_time"]}</span>
+                                                    </div>
+                                                    <div class='game__stat'>
+                                                        <i class='fa fa-gamepad'></i>
+                                                        <span>Status: {$game["game_status"]}</span>
+                                                    </div>
+                                                    <button class='remove-game-btn'>
+                                                        <a href='dashboard.php?{$game["game_id"]}'><i class='fa fa-trash'></i> Remove from Library</a>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class='product__item__text'>
+                                                <ul>
+                                                    <li>{$game["game_genre"]}</li>
+                                                    <li>Movie</li>
+                                                </ul>
+                                                <h5><a href='#'>{$game["game_title"]}</a></h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>";
+            }
+        } else {
+            echo "There are no games";
+        }
     }
 
-    public function showUser(){
+    public function showUser()
+    {
         $stmt = "SELECT username from users where user_id = :user_id";
         $Userquery = $this->conn->prepare($stmt);
         $Userquery->bindParam(":user_id", $_SESSION["user_id"]);
@@ -209,9 +256,3 @@ class Rendering extends connection {
         echo $TheUser = $Userquery->fetchColumn();
     }
 }
-
-
-
-
-
-?>
