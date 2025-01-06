@@ -55,11 +55,10 @@ body {
     width: calc(100% - 250px);
     background: #0b0c2a;
     height: calc(100vh - 80px);
-    overflow-y: hidden;
-    /* Add these properties to center content */
+    overflow-y: auto;
     display: flex;
-    justify-content: center;
-    align-items: flex-start;
+    flex-direction: column;
+    align-items: center;
 }
 
 /* Add this to control the width of content sections */
@@ -284,52 +283,64 @@ label {
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     margin: 20px auto;
-    width: 600px;
+    width: 100%;
+    max-width: 600px;
+}
+
+#create_game .form-group {
+    margin-bottom: 15px;
+}
+
+#create_game label {
+    display: block;
+    margin-bottom: 5px;
+    color: #e0e0e0;
 }
 
 #create_game input[type="text"],
 #create_game input[type="url"],
-#create_game input[type="submit"],
-#create_game button {
+#create_game textarea {
     width: 100%;
     padding: 10px;
     border: 1px solid #444;
     border-radius: 5px;
     background: #1a1a2e;
     color: #ffffff;
-    margin: 10px 0;
+    margin-bottom: 10px;
 }
 
-#create_game input[type="submit"],
-#create_game button {
+#create_game textarea {
+    height: 100px;
+    resize: vertical;
+}
+
+#create_game button,
+#create_game input[type="submit"] {
     background: #e53637;
     color: #ffffff;
     border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
     cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
     font-weight: 700;
 }
 
-#create_game input[type="submit"]:hover,
-#create_game button:hover {
+#create_game button:hover,
+#create_game input[type="submit"]:hover {
     background: #d52c2c;
-}
-
-#create_game label {
-    display: block;
-    margin-top: 15px;
-    color: #e0e0e0;
 }
 
 #screenshots-container input {
     margin-bottom: 10px;
 }
 
-.screenshot-input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #444;
-    border-radius: 5px;
-    background: #1a1a2e;
-    color: #ffffff;
+#add-screenshot {
     margin: 10px 0;
+}
+
+/* Optional: Add some bottom padding to ensure form is fully visible */
+#create_game {
+    padding-bottom: 40px;
 }

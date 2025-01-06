@@ -677,6 +677,19 @@ ol {
 	height: 325px;
 	position: relative;
 	border-radius: 5px;
+	overflow: hidden;
+}
+
+.product__item__pic img {
+	width: 100%;
+	height: 100%;
+	object-fit: fill;
+	transition: transform 0.3s ease;
+}
+
+/* Optional: Add hover effect */
+.product__item__pic:hover img {
+	transform: scale(1.05);
 }
 
 .product__item__pic .ep {
