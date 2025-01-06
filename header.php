@@ -18,7 +18,8 @@ if (isset($_SESSION["username"])) {
         .profile-pic {
             width: 35px;
             height: 35px;
-
+            border-radius: 50%;
+            object-fit: cover;
         }
     </style>
     <div class="container">
@@ -53,7 +54,12 @@ if (isset($_SESSION["username"])) {
                     <a href="#" class="search-switch"><span class="icon_search"></span></a>
                     <?php
                     if (isset($_SESSION['username'])) {
+                        if ($_SESSION['user_role'] === 'admin') {
+                            echo '<a href="./admin_dashboard.php"><img src="' . $profile_pic . '" alt="Profile Picture" class="profile-pic"></a>';
+                        }
+                        elseif($_SESSION['user_role'] !='admin'){
                         echo '<a href="./dashboard.php"><img src="' . $profile_pic . '" alt="Profile Picture" class="profile-pic"></a>';
+                        }
                     } else {
                         echo '<a href="./login.php"><span class="icon_profile"></span></a>';
                     }

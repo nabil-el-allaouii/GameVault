@@ -11,10 +11,9 @@ if (isset($_POST['login'])) {
     $password = htmlspecialchars(trim($_POST['password']));
 
     if ($login->login($email, $password)) {
-        header('Location: dashboard.php');
-        exit();
-    } else {
-        $msg_error = $login->login_error; // Get the error message
+       // Redirection handled in the login method
+    } else{
+        $msg_error = $login->login_error;
     }
 }
 ?>

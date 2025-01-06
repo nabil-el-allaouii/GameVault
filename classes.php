@@ -1,12 +1,14 @@
-<?php 
+<?php
 require_once 'database.php';
 session_start();
 
 
-class register extends connection{
+class register extends connection
+{
     public $register_error = "";
 
-    public function userExists($username, $email){
+    public function userExists($username, $email)
+    {
         $query = $this->conn->prepare("SELECT * FROM users WHERE username = :username OR email = :email");
         $query->bindParam(":username", $username);
         $query->bindParam(":email", $email);
@@ -14,7 +16,8 @@ class register extends connection{
         return $query->rowCount() > 0;
     }
 
-    private function validateInputs($username, $email, $password, $confirmPassword) {
+    private function validateInputs($username, $email, $password, $confirmPassword)
+    {
         if (empty($username) || empty($email) || empty($password) || empty($confirmPassword)) {
             $this->register_error = "All fields are required!";
             return false;
@@ -33,8 +36,9 @@ class register extends connection{
         }
         return true; //all validations passed
     }
-    
-    public function registerUser($username, $email, $password, $confirmPassword) {
+
+    public function registerUser($username, $email, $password, $confirmPassword)
+    {
         if ($this->userExists($username, $email)) {
             $this->register_error = "User already exists!";
             return false;
@@ -55,32 +59,41 @@ class register extends connection{
             return false;
         }
     }
-
-
 }
 
 
 
-class login extends connection{
+class login extends connection
+{
     public $login_error = "";
 
-    public function login($email, $password){
+    public function login($email, $password)
+    {
         $query = $this->conn->prepare("SELECT * FROM users WHERE email = :email");
         $query->bindParam(":email", $email);
         $query->execute();
         $user = $query->fetch(PDO::FETCH_ASSOC);
 
         if ($query->rowCount() > 0) {
-            if(password_verify($password, $user['password'])){
+            if (password_verify($password, $user['password'])) {
                 $_SESSION['username'] = $user['username'];
                 $_SESSION['user_id'] = $user['user_id'];
-                // echo "Login successful!";
-                return true;
-            }else {
+                $_SESSION['user_role'] = $user['user_role'];
+
+                // if the user role is admin
+                if ($user['user_role'] === 'admin') {
+                    header('location: admin_dashboard.php');
+                    exit();
+                }
+
+                // if not an admin redirect to user dashboard
+                header('Location: dashboard.php');
+                exit();
+            } else {
                 $this->login_error = "Invalid email or password!";
                 return false;
             }
-        }else {
+        } else {
             $this->login_error = "Invalid email or password!";
             return false;
         }
@@ -89,13 +102,14 @@ class login extends connection{
 
 
 
-class users extends connection {
+class users extends connection
+{
 
     private $username;
     private $profilePic;
     private $user_id;
 
-    public function __construct($username, $user_id , $profilePic)
+    public function __construct($username, $user_id, $profilePic)
     {
         parent::__construct();
         $this->username = $username;
@@ -104,24 +118,77 @@ class users extends connection {
     }
 
 
-    public function modify(){
+    public function modify()
+    {
         $stmt = "UPDATE users SET username = :username , profile_pic = :profile_pic WHERE user_id = :userID";
         $modifyquery = $this->conn->prepare($stmt);
         $modifyquery->bindParam(":username", $this->username);
-        $modifyquery->bindParam(":userID" , $this->user_id);
-        $modifyquery->bindParam(":profile_pic" , $this->profilePic);
+        $modifyquery->bindParam(":userID", $this->user_id);
+        $modifyquery->bindParam(":profile_pic", $this->profilePic);
         $modifyquery->execute();
     }
 
-    public function getDefaultProfilePic($userID){
+    public function getDefaultProfilePic($userID)
+    {
         $stmt = "SELECT profile_pic from users where user_id = :user_id";
         $GetDefaultPic = $this->conn->prepare($stmt);
         $GetDefaultPic->bindParam(":user_id", $userID);
         $GetDefaultPic->execute();
         return $DefaultPic = $GetDefaultPic->fetchColumn();
     }
+}
 
 
+
+class Game extends connection
+{
+    private $title;
+    private $image;
+    private $genre;
+    private $description;
+    private $screenshots;
+    private $release_date;
+
+    public function __construct($title, $image, $genre, $description, $screenshots, $release_date)
+    {
+        parent::__construct();
+        $this->title = $title;
+        $this->image = $image;
+        $this->genre = $genre;
+        $this->description = $description;
+        $this->screenshots = $screenshots;
+        $this->release_date = $release_date;
+    }
+
+    public function createGame(){
+        //insert game details
+        $stmt = "INSERT INTO game (game_title, game_pic, game_genre, game_description, game_release) 
+                VALUES (:title, :image, :genre, :description, :release_date)";
+
+        $createGame = $this->conn->prepare($stmt);
+        $createGame->bindParam(":title", $this->title);
+        $createGame->bindParam(":image", $this->image);
+        $createGame->bindParam(":genre", $this->genre);
+        $createGame->bindParam(":description", $this->description);
+        $createGame->bindParam(":release_date", $this->release_date);
+       
+        $createGame->execute();
+
+        //get the last inserted game id
+        $game_id = $this->conn->lastInsertId();
+
+        //insert screenshots of this game
+        $stmt = "INSERT INTO screenshots (game_id, screen_image) VALUES (:game_id, :screenshot_url)";
+        $createScreenshot = $this->conn->prepare($stmt);
+
+        foreach ($this->screenshots as $screenshot) {
+            $createScreenshot->bindParam(":game_id", $game_id);
+            $createScreenshot->bindParam(":screenshot_url", $screenshot);
+            $createScreenshot->execute();
+        }
+
+        return true;
+    }
 }
 
 
@@ -142,5 +209,6 @@ class Rendering extends connection {
         echo $TheUser = $Userquery->fetchColumn();
     }
 }
+
 
 ?>

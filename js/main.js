@@ -99,3 +99,16 @@
      });
 
 })(jQuery);
+
+
+
+
+document.getElementById('add-screenshot').addEventListener('click', function() {
+const container = document.getElementById('screenshots-container');
+const newInput = document.createElement('input');
+newInput.type = 'url';
+newInput.name = 'screenshots';
+newInput.placeholder = 'Enter screenshot URL';
+newInput.required = true;
+container.appendChild(newInput);
+});
