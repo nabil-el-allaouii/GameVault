@@ -223,6 +223,60 @@ label {
     /* Light gray for better visibility */
 }
 
+.product__item__pic {
+    position: relative;
+}
+
+.game__details__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.product__item__pic:hover .game__details__overlay {
+    opacity: 1;
+}
+
+.game__stat {
+    color: white;
+    margin: 10px 0;
+    font-size: 14px;
+}
+
+.game__stat i {
+    margin-right: 8px;
+    color: #e53637;
+}
+
+.remove-game-btn {
+    background: #e53637;
+    color: #ffffff;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
+    font-size: 14px;
+    transition: background 0.3s ease;
+}
+
+.remove-game-btn:hover {
+    background: #d52c2c;
+}
+
+.remove-game-btn i {
+    margin-right: 5px;
+}
+
 /* Add these new styles for the create game form */
 #create_game form {
     background: #1a1a2e;
