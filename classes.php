@@ -125,6 +125,22 @@ class users extends connection {
 }
 
 
+class Rendering extends connection {
+    public function showGames($user_ID){
+        $stmt = "SELECT * FROM game join user_library on user_id = :user_id";
+        $ShowStmt = $this->conn->prepare($stmt);
+        $ShowStmt->bindParam(":user_id" , $user_ID);
+        $ShowStmt->execute();
+        $GamesShow = $ShowStmt->fetchAll();
+    }
 
+    public function showUser(){
+        $stmt = "SELECT username from users where user_id = :user_id";
+        $Userquery = $this->conn->prepare($stmt);
+        $Userquery->bindParam(":user_id", $_SESSION["user_id"]);
+        $Userquery->execute();
+        echo $TheUser = $Userquery->fetchColumn();
+    }
+}
 
 ?>
