@@ -256,3 +256,47 @@ class Rendering extends connection
         echo $TheUser = $Userquery->fetchColumn();
     }
 }
+
+
+
+class admin extends connection
+{
+    public function showAllGames()
+    {
+        $stmt = "SELECT * FROM game";
+        $ShowStmt = $this->conn->prepare($stmt);
+        $ShowStmt->execute();
+        $AllGames = $ShowStmt->fetchAll(PDO::FETCH_ASSOC);
+
+
+        foreach ($AllGames as $game) {
+            echo '
+                <div class="col-lg-4 col-md-6 col-sm-6">
+                    <div class="product__item">
+                        <input type="hidden" name="game_id" value="' . $game['game_id'] . '">
+                        <div class="product__item__pic set-bg">
+                            <img src="' . $game['game_pic'] . '">
+                            <div class="ep">18 / 18</div>
+                            <div class="comment"><i class="fa fa-comments"></i> 11</div>
+                            <div class="view"><i class="fa fa-eye"></i> 9141</div>
+                        </div>
+                        <div class="product__item__text">
+                            <ul>
+                                <li>Active</li>
+                                <li>' . $game['game_genre'] . '</li>
+                            </ul>
+                            <h5><a href="#">' . $game['game_title'] . '</a></h5>
+                        </div>
+                    </div>
+                </div>';
+        }
+
+    }
+
+    function showAllUsers(){
+        $stmt = "SELECT * FROM users where user_role = 'player'";
+        $ShowStmt = $this->conn->prepare($stmt);
+        $ShowStmt->execute();
+        $AllUsers = $ShowStmt->fetchAll();
+    }
+}

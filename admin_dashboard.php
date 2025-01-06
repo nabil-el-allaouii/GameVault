@@ -46,27 +46,37 @@
             <div id="create_game" class="content-section" style="display: none;">
                 <h2 style="text-align: center; color: white; margin-bottom: 20px;">Create Game</h2>
                 <form method="POST" action="create_game.php">
-                    <label for="title">Game Title:</label>
-                    <input type="text" id="title" name="title" placeholder="Enter game title" required>
+                    <div class="form-group">
+                        <label for="title">Game Title:</label>
+                        <input type="text" id="title" name="title" placeholder="Enter game title" required>
+                    </div>
 
-                    <label for="image">Game Image:</label>
-                    <input type="url" id="image" name="image" placeholder="Enter image URL" required>
+                    <div class="form-group">
+                        <label for="image">Game Image:</label>
+                        <input type="url" id="image" name="image" placeholder="Enter image URL" required>
+                    </div>
 
-                    <label for="genre">Game Genre:</label>
-                    <input type="text" id="genre" name="genre" placeholder="Enter game genre" required>
+                    <div class="form-group">
+                        <label for="genre">Game Genre:</label>
+                        <input type="text" id="genre" name="genre" placeholder="Enter game genre" required>
+                    </div>
 
-                    <label for="description">Game Description:</label>
-                    <input type="text" id="description" name="description" placeholder="Enter game description" required>
+                    <div class="form-group">
+                        <label for="description">Game Description:</label>
+                        <textarea id="description" name="description" placeholder="Enter game description" required></textarea>
+                    </div>
 
-                    <div id="screenshots-container">
+                    <div class="form-group" id="screenshots-container">
                         <label for="screenshots">Game Screenshots:</label>
                         <input type="url" name="screenshots[]" placeholder="Enter screenshot URL" required>
                     </div>
 
-                    <button type="button" id="add-screenshot" style="margin-top: 10px;">Add Another Screenshot</button>
+                    <button type="button" id="add-screenshot">Add Another Screenshot</button>
 
-                    <label for="release_date">Game Release Date:</label>
-                    <input type="text" id="release_date" name="release_date" placeholder="YYYY-MM-DD HH:MI:SS" required>
+                    <div class="form-group">
+                        <label for="release_date">Game Release Date:</label>
+                        <input type="text" id="release_date" name="release_date" placeholder="YYYY-MM-DD HH:MI:SS" required>
+                    </div>
 
                     <input type="submit" value="Create Game" name="create">
                 </form>
