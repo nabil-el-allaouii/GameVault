@@ -197,7 +197,7 @@ class Rendering extends connection
 {
     public function showGames()
     {
-        $stmt = "SELECT * FROM game join user_library on user_id = :user_id";
+        $stmt = "SELECT * FROM user_library JOIN game ON user_library.game_id = game.game_id WHERE user_library.user_id = :user_id";
         $ShowStmt = $this->conn->prepare($stmt);
         $ShowStmt->bindParam(":user_id", $_SESSION["user_id"]);
         $ShowStmt->execute();
@@ -366,49 +366,42 @@ class admin extends connection
     public function renderAllGames()
     {
         $stmt = "SELECT * FROM game";
-        $GamesShow = $this->conn->query($stmt)->fetchAll();
+        $ShowStmt = $this->conn->prepare($stmt);
+        $ShowStmt->execute();
+        $AllGames = $ShowStmt->fetchAll(PDO::FETCH_ASSOC);
 
-        if (is_array($GamesShow) && !empty($GamesShow)) {
-            foreach ($GamesShow as $game) {
-                echo "<div class='row'>
-                                    <div class='col-lg-4 col-md-6 col-sm-6'>
-                                        <div class='product__item'>
-                                            <div class='product__item__pic set-bg'>
-                                                <img src='{$game["game_pic"]}' alt=''>
-                                                <div class='ep'>18 / 18</div>
-                                                <div class='comment'><i class='fa fa-comments'></i> 11</div>
-                                                <div class='view'><i class='fa fa-eye'></i> 9141</div>
-                                                <div class='game__details__overlay'>
 
-                                                    <button class='remove-game-btn'>
-                                                        <a href='dashboard.php?{$game["game_id"]}'><i class='fa fa-trash'></i> Remove from Library</a>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div class='product__item__text'>
-                                                <ul>
-                                                    <li>{$game["game_genre"]}</li>
-                                                    <li>Movie</li>
-                                                </ul>
-                                                <h5><a href='#'>{$game["game_title"]}</a></h5>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>";
-            }
-        } else {
-            echo "There are no games";
+        foreach ($AllGames as $game) {
+            echo '
+                <div class="col-lg-4 col-md-6 col-sm-6">
+                    <div class="product__item">
+                        <input type="hidden" name="game_id" value="' . $game['game_id'] . '">
+                        <div class="product__item__pic set-bg">
+                            <img src="' . $game['game_pic'] . '">
+                            <div class="ep">18 / 18</div>
+                            <div class="comment"><i class="fa fa-comments"></i> 11</div>
+                            <div class="view"><i class="fa fa-eye"></i> 9141</div>
+                        </div>
+                        <div class="product__item__text">
+                            <ul>
+                                <li>Active</li>
+                                <li>' . $game['game_genre'] . '</li>
+                            </ul>
+                            <h5><a href="#">' . $game['game_title'] . '</a></h5>
+                        </div>
+                    </div>
+                </div>';
         }
     }
 }
 
-class UserLibrary extends connection {
-    public function DeleteGame($game_id){
+class UserLibrary extends connection
+{
+    public function DeleteGame($game_id)
+    {
         $stmt = "DELETE from user_library where game_id = :game_id";
         $deleteQu = $this->conn->prepare($stmt);
-        $deleteQu->bindParam(":game_id" , $game_id);
+        $deleteQu->bindParam(":game_id", $game_id);
         $deleteQu->execute();
     }
 }
-
-
