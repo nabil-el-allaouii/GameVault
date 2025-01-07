@@ -292,14 +292,113 @@ class admin extends connection
                     </div>
                 </div>';
         }
-
     }
 
-    function showAllUsers(){
-        $stmt = "SELECT * FROM users where user_role = 'player'";
+    function showPlayers()
+    {
+        $stmt = "SELECT * FROM users WHERE user_role = 'player'";
         $ShowStmt = $this->conn->prepare($stmt);
         $ShowStmt->execute();
-        $AllUsers = $ShowStmt->fetchAll();
+        $players = $ShowStmt->fetchAll();
+
+        foreach ($players as $user) {
+            echo '<div class="user-item">
+                    <div class="user-info">
+                        <img src="' . htmlspecialchars($user['profile_pic']) . '" class="user-avatar">
+                        <div class="user-details">
+                            <h4>' . htmlspecialchars($user['username']) . '</h4>
+                        </div>
+                    </div>
+                    <div class="user-actions">
+                        <a href="make_admin.php?id=' . $user['user_id'] . '" class="action-btn">Make Admin</a>
+                    </div>
+                </div>';
+        }
+    }
+
+    function showAdmins()
+    {
+        $stmt = "SELECT * FROM users WHERE user_role = 'admin' AND user_id != :user_id";
+        $ShowStmt = $this->conn->prepare($stmt);
+        $ShowStmt->bindParam(":user_id", $_SESSION["user_id"]);
+        $ShowStmt->execute();
+        $admins = $ShowStmt->fetchAll();
+
+        foreach ($admins as $user) {
+            echo '<div class="user-item">
+                    <div class="user-info">
+                        <img src="' . htmlspecialchars($user['profile_pic']) . '" class="user-avatar" >
+                        <div class="user-details">
+                            <h4>' . htmlspecialchars($user['username']) . '</h4>
+                        </div>
+                    </div>
+                    <div class="user-actions">
+                        <a href="remove_admin.php?id=' . $user['user_id'] . '" class="action-btn">Remove Admin</a>
+                    </div>
+                </div>';
+        }
+    }
+
+    public function makeAdmin($user_id)
+    {
+        try {
+            $stmt = "UPDATE users SET user_role = 'admin' WHERE user_id = :user_id";
+            $makeAdmin = $this->conn->prepare($stmt);
+            $makeAdmin->bindParam(":user_id", $user_id);
+            return $makeAdmin->execute();  // Returns true if successful, false if failed
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
+    public function removeAdmin($user_id)
+    {
+        try {
+            $stmt = "UPDATE users SET user_role = 'player' WHERE user_id = :user_id";
+            $removeAdmin = $this->conn->prepare($stmt);
+            $removeAdmin->bindParam(":user_id", $user_id);
+            return $removeAdmin->execute();  // Returns true if successful, false if failed
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
+    public function renderAllGames()
+    {
+        $stmt = "SELECT * FROM game";
+        $GamesShow = $this->conn->query($stmt)->fetchAll();
+
+        if (is_array($GamesShow) && !empty($GamesShow)) {
+            foreach ($GamesShow as $game) {
+                echo "<div class='row'>
+                                    <div class='col-lg-4 col-md-6 col-sm-6'>
+                                        <div class='product__item'>
+                                            <div class='product__item__pic set-bg'>
+                                                <img src='{$game["game_pic"]}' alt=''>
+                                                <div class='ep'>18 / 18</div>
+                                                <div class='comment'><i class='fa fa-comments'></i> 11</div>
+                                                <div class='view'><i class='fa fa-eye'></i> 9141</div>
+                                                <div class='game__details__overlay'>
+
+                                                    <button class='remove-game-btn'>
+                                                        <a href='dashboard.php?{$game["game_id"]}'><i class='fa fa-trash'></i> Remove from Library</a>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class='product__item__text'>
+                                                <ul>
+                                                    <li>{$game["game_genre"]}</li>
+                                                    <li>Movie</li>
+                                                </ul>
+                                                <h5><a href='#'>{$game["game_title"]}</a></h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>";
+            }
+        } else {
+            echo "There are no games";
+        }
     }
 }
 

@@ -26,6 +26,9 @@
         header("location: index.php");
         exit();
     }
+
+    $admin = new admin();
+
     ?>
 
 
@@ -33,6 +36,7 @@
         <aside class="sidebar" id="sidebar">
             <nav>
                 <ul>
+                    <li><a href="#" onclick="showSection('library')">library</a></li>
                     <li><a href="#" onclick="showSection('create_game')">Create game</a></li>
                     <li><a href="#" onclick="showSection('manage_users  ')">Manage users</a></li>
                     <li><a href="#" onclick="showSection('manage_roles')">Manage roles</a></li>
@@ -43,6 +47,28 @@
         </aside>
 
         <main class="main-content">
+        <div id="library" class="content-section" style="display: none;">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="trending__product">
+                                <div class="row">
+                                    <div class="col-lg-8 col-md-8 col-sm-8">
+                                        <div class="section-title">
+                                            <h4>All Games</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- <?php 
+                                    $admin = new admin(); 
+                                    $admin->renderAllGames();
+                                ?> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div id="create_game" class="content-section" style="display: none;">
                 <h2 style="text-align: center; color: white; margin-bottom: 20px;">Create Game</h2>
                 <form method="POST" action="create_game.php">
@@ -95,14 +121,11 @@
                 </div>
             </div>
 
-            <div id="manage_roles" class="content-section" style="display: none;">
-                <h2>Manage roles</h2>
-                <!-- <p>Details about your games will be displayed here.</p> -->
-            </div>
+            <?php include "manage_roles.php"; ?>
 
             <div id="welcome" class="content-section">
-                <h2>Welcome to admin Dashboard</h2>
-                <p>Select an option from the sidebar to create games, manages profile manage roles.</p>
+                <h2>Welcome to admin dashboard, admin: <?php echo $_SESSION["username"]; ?></h2>
+                <p>Select an option from the sidebar to create a new game, manage profile or manage roles.</p>
             </div>
         </main>
     </div>

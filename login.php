@@ -78,6 +78,12 @@ if (isset($_POST['login'])) {
                 <div class="col-lg-6">
                     <div class="login__form">
                         <h3>Login</h3>
+
+                           <!-- Display error message -->
+                            <?php if (!empty($msg_error)): ?>
+                                <p style="color: red;"><?= htmlspecialchars($msg_error); ?></p>
+                            <?php endif; ?>
+                            
                         <form action="login.php" method="post">
                             <div class="input__item">
                                 <input type="text" name="email" placeholder="Email address">
@@ -99,11 +105,6 @@ if (isset($_POST['login'])) {
                     </div>
                 </div>
             </div>
-
-            <!-- Display error message -->
-            <?php if (!empty($msg_error)): ?>
-                <p style="color: red;"><?= htmlspecialchars($msg_error); ?></p>
-            <?php endif; ?>
 
             <div class="login__social">
                 <div class="row d-flex justify-content-center">
