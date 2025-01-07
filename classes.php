@@ -220,15 +220,17 @@ class Rendering extends connection
                                                     </div>
                                                     <div class='game__stat'>
                                                         <i class='fa fa-clock-o'></i>
-                                                        <span>Playtime: {$game["play_time"]}</span>
+                                                        <span>Playtime: {$game["play_time"]}h</span>
                                                     </div>
                                                     <div class='game__stat'>
                                                         <i class='fa fa-gamepad'></i>
                                                         <span>Status: {$game["game_status"]}</span>
                                                     </div>
+                                                    <a href='deleteGameUser.php?gameID={$game['game_id']}'>
                                                     <button class='remove-game-btn'>
-                                                        <a href='dashboard.php?{$game["game_id"]}'><i class='fa fa-trash'></i> Remove from Library</a>
+                                                        <i class='fa fa-trash'></i> Remove from Library
                                                     </button>
+                                                    </a>
                                                 </div>
                                             </div>
                                             <div class='product__item__text'>
@@ -300,3 +302,14 @@ class admin extends connection
         $AllUsers = $ShowStmt->fetchAll();
     }
 }
+
+class UserLibrary extends connection {
+    public function DeleteGame($game_id){
+        $stmt = "DELETE from user_library where game_id = :game_id";
+        $deleteQu = $this->conn->prepare($stmt);
+        $deleteQu->bindParam(":game_id" , $game_id);
+        $deleteQu->execute();
+    }
+}
+
+
