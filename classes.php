@@ -204,46 +204,46 @@ class Rendering extends connection
         $GamesShow = $ShowStmt->fetchAll();
 
         if (is_array($GamesShow) && !empty($GamesShow)) {
+            echo "<div class='row'>";
             foreach ($GamesShow as $game) {
-                echo "<div class='row'>
-                                    <div class='col-lg-4 col-md-6 col-sm-6'>
-                                        <div class='product__item'>
-                                            <div class='product__item__pic set-bg'>
-                                                <img src='{$game["game_pic"]}' alt=''>
-                                                <div class='ep'>18 / 18</div>
-                                                <div class='comment'><i class='fa fa-comments'></i> 11</div>
-                                                <div class='view'><i class='fa fa-eye'></i> 9141</div>
-                                                <div class='game__details__overlay'>
-                                                    <div class='game__stat'>
-                                                        <i class='fa fa-star'></i>
-                                                        <span>Personal Score: {$game["personal_score"]}/10</span>
-                                                    </div>
-                                                    <div class='game__stat'>
-                                                        <i class='fa fa-clock-o'></i>
-                                                        <span>Playtime: {$game["play_time"]}h</span>
-                                                    </div>
-                                                    <div class='game__stat'>
-                                                        <i class='fa fa-gamepad'></i>
-                                                        <span>Status: {$game["game_status"]}</span>
-                                                    </div>
-                                                    <a href='deleteGameUser.php?gameID={$game['game_id']}'>
-                                                    <button class='remove-game-btn'>
-                                                        <i class='fa fa-trash'></i> Remove from Library
-                                                    </button>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                            <div class='product__item__text'>
-                                                <ul>
-                                                    <li>{$game["game_genre"]}</li>
-                                                    <li>Movie</li>
-                                                </ul>
-                                                <h5><a href='#'>{$game["game_title"]}</a></h5>
-                                            </div>
-                                        </div>
+                echo "<div class='col-lg-4 col-md-6 col-sm-6'>
+                        <div class='product__item'>
+                            <div class='product__item__pic set-bg'>
+                                <img src='{$game["game_pic"]}' alt=''>
+                                <div class='ep'>18 / 18</div>
+                                <div class='comment'><i class='fa fa-comments'></i> 11</div>
+                                <div class='view'><i class='fa fa-eye'></i> 9141</div>
+                                <div class='game__details__overlay'>
+                                    <div class='game__stat'>
+                                        <i class='fa fa-star'></i>
+                                        <span>Personal Score: {$game["personal_score"]}/10</span>
                                     </div>
-                                </div>";
+                                    <div class='game__stat'>
+                                        <i class='fa fa-clock-o'></i>
+                                        <span>Playtime: {$game["play_time"]}h</span>
+                                    </div>
+                                    <div class='game__stat'>
+                                        <i class='fa fa-gamepad'></i>
+                                        <span>Status: {$game["game_status"]}</span>
+                                    </div>
+                                    <a href='deleteGameUser.php?gameID={$game['game_id']}'>
+                                    <button class='remove-game-btn'>
+                                        <i class='fa fa-trash'></i> Remove from Library
+                                    </button>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class='product__item__text'>
+                                <ul>
+                                    <li>{$game["game_genre"]}</li>
+                                    <li>Movie</li>
+                                </ul>
+                                <h5><a href='game-details.php?Game_id={$game['game_id']}'>{$game["game_title"]}</a></h5>
+                            </div>
+                        </div>
+                    </div>";
             }
+            echo "</div>";
         } else {
             echo "There are no games";
         }
@@ -257,6 +257,109 @@ class Rendering extends connection
         $Userquery->execute();
         echo $TheUser = $Userquery->fetchColumn();
     }
+
+    public function ShowGameDetails($gameID)
+    {
+        $stmt = "SELECT * from game where game_id = :game_id";
+        $DetailQuery = $this->conn->prepare($stmt);
+        $DetailQuery->bindParam(":game_id", $gameID);
+        $DetailQuery->execute();
+        $detail = $DetailQuery->fetch();
+
+        $checkstmt = "select user_role from users where user_id = :user_id";
+        $checking = $this->conn->prepare($checkstmt);
+        $checking->bindParam(":user_id",$_SESSION["user_id"]);
+        $checking->execute();
+        $isthere = $checking->fetch();
+
+        if(empty($detail)){
+            header("location: index.php");
+        }
+
+        $AddToLibraryCheck = '';
+        if($isthere["user_role"] === "player"){ 
+            $AddToLibraryCheck = "<div class='anime__details__btn'>
+                                <a href='#' class='follow-btn'><i class='fa fa-plus'></i> Add to Library</a>
+                                <a href='dashboard.php' class='watch-btn'><span>See in Dashboard</span> <i
+                                        class='fa fa-angle-right'></i></a>
+                            </div>";
+        }
+        else{
+            $AddToLibraryCheck = "<div class='anime__details__btn'>
+                                <a href='admin_dashboard.php' class='watch-btn'><span>See in Dashboard</span> <i
+                                        class='fa fa-angle-right'></i></a>
+                            </div>";
+        }
+        
+        return "<div class='anime__details__content'>
+                <div class='row'>
+                    <div class='col-lg-3'>
+                        <div class='anime__details__pic set-bg'>
+                            <img src='{$detail['game_pic']}'>
+                            <div class='comment'><i class='fa fa-comments'></i> 11</div>
+                            <div class='view'><i class='fa fa-eye'></i> 9141</div>
+                        </div>
+                    </div>
+                    <div class='col-lg-9'>
+                        <div class='anime__details__text'>
+                            <div class='anime__details__title'>
+                                <h3>{$detail["game_title"]}</h3>
+                            </div>
+                            <div class='anime__details__rating'>
+                                <div class='rating'>
+                                    <a href='#'><i class='fa fa-star'></i></a>
+                                    <a href='#'><i class='fa fa-star'></i></a>
+                                    <a href='#'><i class='fa fa-star'></i></a>
+                                    <a href='#'><i class='fa fa-star'></i></a>
+                                    <a href='#'><i class='fa fa-star-half-o'></i></a>
+                                </div>
+                                <span>1.029 Votes</span>
+                            </div>
+                            <p>{$detail["game_description"]}</p>
+                            <div class='anime__details__widget'>
+                                <div class='row'>
+                                    <div class='col-lg-12'>
+                                        <ul>
+                                            <li><span>Date aired:</span>{$detail["game_release"]}</li>
+                                            <li><span>Genre:</span>{$detail["game_genre"]}</li>
+                                            <li><span>Rating:</span> {$detail["average_score"]} / 10</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                                {$AddToLibraryCheck}
+                        </div>
+                    </div>
+                </div>
+            </div>";
+    }
+
+
+    public function ShowScreens($gameID)
+    {
+        $stmt = "SELECT * from screenshots where game_id = :game_id";
+        $showscreen = $this->conn->prepare($stmt);
+        $showscreen->bindParam(":game_id", $gameID);
+        $showscreen->execute();
+        $screens = $showscreen->fetchAll();
+
+        echo "<div class='game__screenshots'>
+                <h5>Screenshots</h5>
+                <div class='row g-2'>";
+        foreach ($screens as $screen) {
+            echo "
+                    <div class='col-4'>
+                        <div class='screenshot__item'>
+                            <img src='{$screen["screen_image"]}' alt='Screenshot 1'>
+                            <div class='screenshot__preview'>
+                                <img src='{$screen["screen_image"]}' alt='Screenshot 1'>
+                            </div>
+                        </div>
+                    </div>";
+        }
+        echo "</div>
+            </div>";
+    }
 }
 
 
@@ -268,7 +371,7 @@ class admin extends connection
         $stmt = "SELECT * FROM game";
         $ShowStmt = $this->conn->prepare($stmt);
         $ShowStmt->execute();
-        $AllGames = $ShowStmt->fetchAll(PDO::FETCH_ASSOC);
+        $AllGames = $ShowStmt->fetchAll();
 
 
         foreach ($AllGames as $game) {
@@ -287,7 +390,7 @@ class admin extends connection
                                 <li>Active</li>
                                 <li>' . $game['game_genre'] . '</li>
                             </ul>
-                            <h5><a href="#">' . $game['game_title'] . '</a></h5>
+                            <h5><a href="game-details.php?Game_id='.$game['game_id'].'">' . $game['game_title'] . '</a></h5>
                         </div>
                     </div>
                 </div>';
@@ -387,7 +490,7 @@ class admin extends connection
                                 <li>Active</li>
                                 <li>' . $game['game_genre'] . '</li>
                             </ul>
-                            <h5><a href="#">' . $game['game_title'] . '</a></h5>
+                            <h5><a href="">' . $game['game_title'] . '</a></h5>
                         </div>
                     </div>
                 </div>';

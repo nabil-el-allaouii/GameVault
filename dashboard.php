@@ -25,6 +25,9 @@
     if (!isset($_SESSION["username"])) {
         header("location: index.php");
     }
+    if($_SESSION["user_role"] === "admin"){
+        header("location: admin_dashboard.php");
+    }
 
     include "dashboard.inc.php";
 
@@ -39,8 +42,7 @@
                 <ul>
                     <li><a href="#" onclick="showSection('library')">Library</a></li>
                     <li><a href="#" onclick="showSection('profile')">Profile</a></li>
-                    <li><a href="#" onclick="showSection('game-details')">Game Details</a></li>
-                    <li><a href="#">Chat</a></li>
+                    <li><a href="#" onclick="showSection('history')">History</a></li>
                     <li><a href="logout.php">Logout</a></li>
                 </ul>
             </nav>
@@ -64,8 +66,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <?php $avail = new Rendering(); 
-                                      $showAv = $avail->showGames();  ?>
+                                <?php $avail = new Rendering();
+                                $showAv = $avail->showGames();  ?>
                             </div>
                         </div>
                     </div>
@@ -86,9 +88,29 @@
                 </div>
             </div>
 
-            <div id="game-details" class="content-section" style="display: none;">
-                <h2>Game Details</h2>
-                <p>Details about your games will be displayed here.</p>
+            <div id="history" class="content-section" style="display: none;">
+                <div class="history-container">
+                    <div class="history-header">
+                        <h2>Gaming History</h2>
+                        <p>Your recently visited games</p>
+                    </div>
+                    <div class="history-list">
+                        <!-- Hardcoded Example -->
+                        <div class="history-item">
+                            <div class="history-item-icon">
+                                <i class="fa fa-gamepad"></i>
+                            </div>
+                            <div class="history-item-details">
+                                <div class="history-item-title">The Last of Us Part II</div>
+                                <div class="history-item-date">
+                                    <i class="fa fa-clock-o"></i>
+                                    Last visited: March 15, 2024
+                                </div>
+                                <a href="#" class="history-item-link">View Game Details <i class="fa fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div id="welcome" class="content-section">

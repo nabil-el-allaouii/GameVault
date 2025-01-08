@@ -2,7 +2,7 @@
 class connection{
     private $host = 'localhost';
     private $user = 'root';
-    private $password = '';
+    private $password = '258456';
     private $dbname = 'GameVault';
 
     protected $conn;

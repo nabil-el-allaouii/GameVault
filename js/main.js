@@ -98,4 +98,25 @@
         return false;
      });
 
+    $(document).ready(function() {
+        $('.screenshot__item').click(function() {
+            var preview = $(this).find('.screenshot__preview');
+            var overlay = $('<div class="screenshot__overlay"></div>');
+            
+            // Add overlay and show preview
+            $('body').append(overlay);
+            preview.addClass('active');
+            overlay.addClass('active');
+
+            // Close on overlay click
+            overlay.click(function() {
+                preview.removeClass('active');
+                overlay.removeClass('active');
+                setTimeout(function() {
+                    overlay.remove();
+                }, 200);
+            });
+        });
+    });
+
 })(jQuery);
