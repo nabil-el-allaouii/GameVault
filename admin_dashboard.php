@@ -26,9 +26,19 @@
         header("location: index.php");
         exit();
     }
-
     $admin = new admin();
 
+    if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['id'])) {
+        if ($admin->deleteGame($_GET['id'])) {
+            header("Location: admin_dashboard.php?success=Game deleted successfully");
+            exit();
+        } else {
+            header("Location: admin_dashboard.php?error=Failed to delete game");
+            exit();
+        }
+    }
+
+    include "admin_dashboard.inc.php";
     ?>
 
 
@@ -36,9 +46,10 @@
         <aside class="sidebar" id="sidebar">
             <nav>
                 <ul>
-                    <li><a href="#" onclick="showSection('library')">library</a></li>
+                    <li><a href="#" onclick="showSection('edit_profile')">Edit profile</a></li>
+                    <li><a href="#" onclick="showSection('library')">Manage games</a></li>
                     <li><a href="#" onclick="showSection('create_game')">Create game</a></li>
-                    <li><a href="#" onclick="showSection('manage_users  ')">Manage users</a></li>
+                    <li><a href="#" onclick="showSection('manage_users')">Manage users</a></li>
                     <li><a href="#" onclick="showSection('manage_roles')">Manage roles</a></li>
                     <!-- <li><a href="#">Chat</a></li> -->
                     <li><a href="logout.php">Logout</a></li>
@@ -47,7 +58,7 @@
         </aside>
 
         <main class="main-content">
-        <div id="library" class="content-section" style="display: none;">
+            <div id="library" class="content-section" style="display: none;">
                 <div class="container">
                     <div class="row">
                         <div class="col-lg-8">
@@ -59,12 +70,39 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- <?php 
-                                    $admin = new admin(); 
+                                <div class="row">
+                                    <?php
+                                    $admin = new admin();
                                     $admin->renderAllGames();
-                                ?> -->
+                                    ?>
+                                </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="edit_profile" class="content-section" style="display: none;">
+                <div class="profile-card">
+                    <h2>Admin Profile</h2>
+                    <form action="admin_dashboard.php" method="post" enctype="multipart/form-data">
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" name="username" placeholder="Enter your username" value="<?php $TheUser = new Rendering();
+                                                                                                                    $shownUser = $TheUser->showUser(); ?>" required>
+                        <label for="imageUpload">Profile Picture:</label>
+                        <input type="text" id="imageUpload" name="imageUpload" placeholder="Enter image URL">
+                        <button type="submit" name="update_profile">Update Profile</button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="edit_profile" class="content-section" style="display: none;">
+                <div class="profile-card">
+                    <h2>Edit Profile</h2>
+                    <div class="users-list">
+                        <?php $admin->banPlayer(); ?>
+                        <hr style="border: 1px solid white;">
+                        <?php $admin->unbanPlayer(); ?>
                     </div>
                 </div>
             </div>
@@ -101,7 +139,7 @@
 
                     <div class="form-group">
                         <label for="release_date">Game Release Date:</label>
-                        <input type="text" id="release_date" name="release_date" placeholder="YYYY-MM-DD HH:MI:SS" required>
+                        <input type="date" id="release_date" name="release_date" placeholder="YYYY-MM-DD HH:MI:SS" required>
                     </div>
 
                     <input type="submit" value="Create Game" name="create">
@@ -110,21 +148,20 @@
 
             <div id="manage_users" class="content-section" style="display: none;">
                 <div class="profile-card">
-                    <h2>Manage users</h2>
-                    <!-- <form action="dashboard.php" method="post" enctype="multipart/form-data">
-                        <label for="username">Username:</label>
-                        <input type="text" id="username" name="username" placeholder="Enter your username" required>
-                        <label for="imageUpload">Profile Picture:</label>
-                        <input type="text" id="imageUpload" name="imageUpload" placeholder="Enter image URL">
-                        <button type="submit" name="update_profile">Update Profile</button>
-                    </form> -->
+                    <h2>Manage Users</h2>
+                    <div class="users-list">
+                        <?php $admin->banPlayer(); ?>
+                        <hr style="border: 1px solid white;">
+                        <?php $admin->unbanPlayer(); ?>
+                    </div>
                 </div>
             </div>
 
             <?php include "manage_roles.php"; ?>
 
             <div id="welcome" class="content-section">
-                <h2>Welcome to admin dashboard, admin: <?php echo $_SESSION["username"]; ?></h2>
+                <h2>Welcome to admin dashboard, admin: <?php $TheUser = new Rendering(); 
+                                                         $shownUser = $TheUser->showUser(); ?></h2>
                 <p>Select an option from the sidebar to create a new game, manage profile or manage roles.</p>
             </div>
         </main>
