@@ -387,8 +387,8 @@ class admin extends connection
                         </div>
                         <div class="product__item__text">
                             <ul>
-                                <li>Active</li>
-                                <li>' . $game['game_genre'] . '</li>
+                            <li>' . $game['game_genre'] . '</li>
+                            <li>' . $game['game_release'] . '</li>
                             </ul>
                             <h5><a href="game-details.php?Game_id='.$game['game_id'].'">' . $game['game_title'] . '</a></h5>
                         </div>
@@ -473,38 +473,102 @@ class admin extends connection
         $ShowStmt->execute();
         $AllGames = $ShowStmt->fetchAll(PDO::FETCH_ASSOC);
 
-
+        echo '<div class="row">';
         foreach ($AllGames as $game) {
-            echo '
-                <div class="col-lg-4 col-md-6 col-sm-6">
-                    <div class="product__item">
+            echo ' <div class="col-lg-4 col-md-6 col-sm-6">
+                        <div class="product__item">
                         <input type="hidden" name="game_id" value="' . $game['game_id'] . '">
                         <div class="product__item__pic set-bg">
                             <img src="' . $game['game_pic'] . '">
                             <div class="ep">18 / 18</div>
                             <div class="comment"><i class="fa fa-comments"></i> 11</div>
-                            <div class="view"><i class="fa fa-eye"></i> 9141</div>
-                        </div>
-                        <div class="product__item__text">
+                                <div class="view"><i class="fa fa-eye"></i> 9141</div>
+
+                                    <div class="game__details__overlay">
+                                        <a href="admin_dashboard.php?action=delete&id=' . $game['game_id'] . '" style="color: #ff0001; border: 2px solid #ff0001; border-radius: 5px; background-color: #ffffffb3; cursor: pointer;" onclick="return confirm(\'Are you sure you want to delete this game?\');">
+                                            <i class="fa fa-trash"></i> Delete Game
+                                        </a>
+                                    </div>
+
+                                </div>
+                            <div class="product__item__text">
                             <ul>
-                                <li>Active</li>
                                 <li>' . $game['game_genre'] . '</li>
+                                <li>' . $game['game_release'] . '</li>
                             </ul>
                             <h5><a href="">' . $game['game_title'] . '</a></h5>
                         </div>
                     </div>
                 </div>';
         }
+        echo '</div>';
     }
-}
 
-class UserLibrary extends connection
-{
-    public function DeleteGame($game_id)
+    public function deleteGame($game_id)
     {
-        $stmt = "DELETE from user_library where game_id = :game_id";
-        $deleteQu = $this->conn->prepare($stmt);
-        $deleteQu->bindParam(":game_id", $game_id);
-        $deleteQu->execute();
+        $stmt3 = "DELETE FROM game WHERE game_id = $game_id";
+        $deleteGame = $this->conn->query($stmt3);
+        return $deleteGame;
+    }
+
+
+    public function banPlayer()
+    {
+        $stmt = "SELECT * FROM users WHERE user_role = 'player' AND banned = 'safe'";
+        $ShowStmt = $this->conn->prepare($stmt);
+        $ShowStmt->execute();
+        $players = $ShowStmt->fetchAll();
+
+        foreach ($players as $user) {
+            echo '<div class="user-item">
+                    <div class="user-info">
+                        <img src="' . htmlspecialchars($user['profile_pic']) . '" class="user-avatar">
+                        <div class="user-details">
+                            <h4>' . htmlspecialchars($user['username']) . '</h4>
+                        </div>
+                    </div>
+                    <div class="user-actions">
+                        <a href="ban_user.php?id=' . $user['user_id'] . '" class="action-btn">Ban user</a>
+                    </div>
+                </div>';
+        }
+    }
+
+    public function banUser($user_id)
+    {
+        $stmt = "UPDATE users SET banned = 'banned' WHERE user_id = :user_id";
+        $banUser = $this->conn->prepare($stmt);
+        $banUser->bindParam(":user_id", $user_id);
+        return $banUser->execute();
+    }
+
+    public function unbanPlayer()
+    {
+        $stmt = "SELECT * FROM users WHERE user_role = 'player' AND banned = 'banned'";
+        $ShowStmt = $this->conn->prepare($stmt);
+        $ShowStmt->execute();
+        $players = $ShowStmt->fetchAll();
+
+        foreach ($players as $user) {
+            echo '<div class="user-item">
+                    <div class="user-info">
+                        <img src="' . htmlspecialchars($user['profile_pic']) . '" class="user-avatar">
+                        <div class="user-details">
+                            <h4>' . htmlspecialchars($user['username']) . '</h4>
+                        </div>
+                    </div>
+                    <div class="user-actions">
+                        <a href="unban_user.php?id=' . $user['user_id'] . '" class="action-btn">Unban user</a>
+                    </div>
+                </div>';
+        }
+    }
+
+    public function unbanUser($user_id)
+    {
+        $stmt = "UPDATE users SET banned = 'safe' WHERE user_id = :user_id";
+        $unbanUser = $this->conn->prepare($stmt);
+        $unbanUser->bindParam(":user_id", $user_id);
+        return $unbanUser->execute();
     }
 }

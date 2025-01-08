@@ -372,6 +372,89 @@ label {
     padding-bottom: 40px;
 }
 
+/* Date Input Styling */
+input[type="date"] {
+    background-color: #0b0c2a;
+    padding: 10px;
+    color: #ffffff;
+    font-size: 16px;
+    border: 2px solid #2b2d41;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    margin-bottom: 15px;
+    transition: border-color 0.3s ease;
+}
+
+/* Calendar Icon Color */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
+/* Focus State */
+input[type="date"]:focus {
+    outline: none;
+    border-color: #e53637;
+}
+
+/* Hover State */
+input[type="date"]:hover {
+    border-color: #e53637;
+}
+
+/* Placeholder Color */
+input[type="date"]::placeholder {
+    color: #ffffff;
+    opacity: 0.7;
+}
+
+.users-list {
+    margin-top: 20px;
+}
+
+.user-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    margin-bottom: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.action-btn {
+    padding: 8px 15px;
+    background: #e53637;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+.action-btn:hover {
+    background: #d52c2c;
+    color: white;
+}
+
 /* History Section Styles */
 .history-container {
     background: #1a1a2e;
