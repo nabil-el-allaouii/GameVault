@@ -268,29 +268,28 @@ class Rendering extends connection
 
         $checkstmt = "select user_role from users where user_id = :user_id";
         $checking = $this->conn->prepare($checkstmt);
-        $checking->bindParam(":user_id",$_SESSION["user_id"]);
+        $checking->bindParam(":user_id", $_SESSION["user_id"]);
         $checking->execute();
         $isthere = $checking->fetch();
 
-        if(empty($detail)){
+        if (empty($detail)) {
             header("location: index.php");
         }
 
         $AddToLibraryCheck = '';
-        if($isthere["user_role"] === "player"){ 
+        if ($isthere["user_role"] === "player") {
             $AddToLibraryCheck = "<div class='anime__details__btn'>
                                 <a href='#' class='follow-btn'><i class='fa fa-plus'></i> Add to Library</a>
                                 <a href='dashboard.php' class='watch-btn'><span>See in Dashboard</span> <i
                                         class='fa fa-angle-right'></i></a>
                             </div>";
-        }
-        else{
+        } else {
             $AddToLibraryCheck = "<div class='anime__details__btn'>
                                 <a href='admin_dashboard.php' class='watch-btn'><span>See in Dashboard</span> <i
                                         class='fa fa-angle-right'></i></a>
                             </div>";
         }
-        
+
         return "<div class='anime__details__content'>
                 <div class='row'>
                     <div class='col-lg-3'>
@@ -390,7 +389,7 @@ class admin extends connection
                             <li>' . $game['game_genre'] . '</li>
                             <li>' . $game['game_release'] . '</li>
                             </ul>
-                            <h5><a href="game-details.php?Game_id='.$game['game_id'].'">' . $game['game_title'] . '</a></h5>
+                            <h5><a href="game-details.php?Game_id=' . $game['game_id'] . '">' . $game['game_title'] . '</a></h5>
                         </div>
                     </div>
                 </div>';
@@ -485,8 +484,11 @@ class admin extends connection
                                 <div class="view"><i class="fa fa-eye"></i> 9141</div>
 
                                     <div class="game__details__overlay">
-                                        <a href="admin_dashboard.php?action=delete&id=' . $game['game_id'] . '" style="color: #ff0001; border: 2px solid #ff0001; border-radius: 5px; background-color: #ffffffb3; cursor: pointer;" onclick="return confirm(\'Are you sure you want to delete this game?\');">
+                                        <a href="admin_dashboard.php?action=delete&id=' . $game['game_id'] . '" style="color: #ff0001; border: 2px solid #ff0001; border-radius: 5px; background-color: #ffffffb3; cursor: pointer; margin-bottom: 10px; display: block; padding: 5px" onclick="return confirm(\'Are you sure you want to delete this game?\');">
                                             <i class="fa fa-trash"></i> Delete Game
+                                        </a>
+                                        <a href="#" onclick="showEditForm(' . $game['game_id'] . ', \'' . $game['game_title'] . '\', \'' . $game['game_description'] . '\', \'' . $game['game_genre'] . '\', \'' . $game['game_release'] . '\', \'' . $game['game_pic'] . '\')" style="color: #0066ff; border: 2px solid #0066ff; border-radius: 5px; background-color: #ffffffb3; cursor: pointer; display: block;padding-inline: 12px;padding-block: 4px">
+                                            <i class="fa fa-edit"></i> Edit Game
                                         </a>
                                     </div>
 
@@ -496,7 +498,7 @@ class admin extends connection
                                 <li>' . $game['game_genre'] . '</li>
                                 <li>' . $game['game_release'] . '</li>
                             </ul>
-                            <h5><a href="">' . $game['game_title'] . '</a></h5>
+                            <h5><a href="game-details.php?Game_id=' . $game['game_id'] . '">' . $game['game_title'] . '</a></h5>
                         </div>
                     </div>
                 </div>';
@@ -509,6 +511,28 @@ class admin extends connection
         $stmt3 = "DELETE FROM game WHERE game_id = $game_id";
         $deleteGame = $this->conn->query($stmt3);
         return $deleteGame;
+    }
+
+    public function editGame($game_id)
+    {
+        $stmt = "UPDATE game SET 
+                game_title = :game_title, 
+                game_description = :game_description, 
+                game_genre = :game_genre, 
+                game_release = :game_release, 
+                game_pic = :game_pic 
+                WHERE game_id = :game_id";
+
+        $editGame = $this->conn->prepare($stmt);
+
+        $editGame->bindParam(":game_title", $_POST['title']);
+        $editGame->bindParam(":game_description", $_POST['description']);
+        $editGame->bindParam(":game_genre", $_POST['genre']);
+        $editGame->bindParam(":game_release", $_POST['release_date']);
+        $editGame->bindParam(":game_pic", $_POST['image']);
+        $editGame->bindParam(":game_id", $game_id);
+
+        return $editGame->execute();
     }
 
 

@@ -39,7 +39,7 @@ if (isset($_SESSION["username"])) {
                             <li><a href="#">Categories <span class="arrow_carrot-down"></span></a>
                                 <ul class="dropdown">
                                     <li><a href="#">Categories</a></li>
-                                    <li><a href="./anime-details.php">Anime Details</a></li>
+                                    <li><a href="#">Game Details</a></li>
                                     <li><a href="#">Blog Details</a></li>
                                 </ul>
                             </li>
