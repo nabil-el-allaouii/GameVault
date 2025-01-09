@@ -44,7 +44,7 @@
                     <div class="breadcrumb__links">
                         <a href="./index.php"><i class="fa fa-home"></i> Home</a>
                         <a href="#">Categories</a>
-                        <span>Romance</span>
+                        <span>Games</span>
                     </div>
                 </div>
             </div>

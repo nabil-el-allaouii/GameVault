@@ -82,6 +82,39 @@
                 </div>
             </div>
 
+            <div id="edit_game" class="content-section" style="display: none;">
+                <h2 style="text-align: center; color: white; margin-bottom: 20px;">Edit Game</h2>
+                <form method="POST" action="edit_game.php">
+                    <input type="hidden" id="edit_game_id" name="game_id">
+                    <div class="form-group">
+                        <label for="edit_title">Game Title:</label>
+                        <input type="text" id="edit_title" name="title" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="edit_image">Game Image:</label>
+                        <input type="url" id="edit_image" name="image" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="edit_genre">Game Genre:</label>
+                        <input type="text" id="edit_genre" name="genre" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="edit_description">Game Description:</label>
+                        <textarea id="edit_description" name="description" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="edit_release_date">Game Release Date:</label>
+                        <input type="date" id="edit_release_date" name="release_date" required>
+                    </div>
+
+                    <input type="submit" value="Update Game" name="update">
+                </form>
+            </div>
+
             <div id="edit_profile" class="content-section" style="display: none;">
                 <div class="profile-card">
                     <h2>Admin Profile</h2>
@@ -160,8 +193,8 @@
             <?php include "manage_roles.php"; ?>
 
             <div id="welcome" class="content-section">
-                <h2>Welcome to admin dashboard, admin: <?php $TheUser = new Rendering(); 
-                                                         $shownUser = $TheUser->showUser(); ?></h2>
+                <h2>Welcome to admin dashboard, admin: <?php $TheUser = new Rendering();
+                                                        $shownUser = $TheUser->showUser(); ?></h2>
                 <p>Select an option from the sidebar to create a new game, manage profile or manage roles.</p>
             </div>
         </main>
@@ -196,6 +229,18 @@
                 container.appendChild(newInput);
             });
         });
+
+        function showEditForm(gameId, title, description, genre, release, image) {
+            showSection('edit_game');
+            document.getElementById('edit_game_id').value = gameId;
+            document.getElementById('edit_title').value = title;
+            document.getElementById('edit_description').value = description;
+            document.getElementById('edit_genre').value = genre;
+            document.getElementById('edit_release_date').value = release;
+            document.getElementById('edit_image').value = image;
+        }
+
+    
     </script>
 </body>
 
