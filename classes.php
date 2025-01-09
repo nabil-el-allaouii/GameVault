@@ -572,3 +572,15 @@ class admin extends connection
         return $unbanUser->execute();
     }
 }
+
+
+class UserLibrary extends connection
+{
+    public function DeleteGame($game_id)
+{
+        $stmt = "DELETE from user_library where game_id = :game_id";
+	$deleteQu = $this->conn->prepare($stmt);
+        $deleteQu->bindParam(":game_id", $game_id);
+        $deleteQu->execute();
+    }
+}
