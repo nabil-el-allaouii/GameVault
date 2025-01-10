@@ -136,6 +136,17 @@ class users extends connection
         $GetDefaultPic->execute();
         return $DefaultPic = $GetDefaultPic->fetchColumn();
     }
+
+    public function AddPersonalStats($game_status, $personal_score, $playTime)
+    {
+        $stmt = "UPDATE user_library set game_status = :game_status ,personal_score = :personal_score , play_time = :playtime where user_id = :user_id";
+        $updatePs = $this->conn->prepare($stmt);
+        $updatePs->bindParam(":game_status", $game_status);
+        $updatePs->bindParam(":personal_score", $personal_score);
+        $updatePs->bindParam(":playtime", $playTime);
+        $updatePs->bindParam(":user_id", $_SESSION["user_id"]);
+        $updatePs->execute();
+    }
 }
 
 
@@ -214,23 +225,28 @@ class Rendering extends connection
                                 <div class='comment'><i class='fa fa-comments'></i> 11</div>
                                 <div class='view'><i class='fa fa-eye'></i> 9141</div>
                                 <div class='game__details__overlay'>
-                                    <div class='game__stat'>
-                                        <i class='fa fa-star'></i>
-                                        <span>Personal Score: {$game["personal_score"]}/10</span>
+                                    <div class='game__stats'>
+                                        <div class='game__stat'>
+                                            <i class='fa fa-star'></i>
+                                            <span>Personal Score: {$game["personal_score"]}</span>
+                                        </div>
+                                        <div class='game__stat'>
+                                            <i class='fa fa-clock-o'></i>
+                                            <span>Playtime: {$game["play_time"]}h</span>
+                                        </div>
+                                        <div class='game__stat'>
+                                            <i class='fa fa-gamepad'></i>
+                                            <span>Status: {$game["game_status"]}</span>
+                                        </div>
                                     </div>
-                                    <div class='game__stat'>
-                                        <i class='fa fa-clock-o'></i>
-                                        <span>Playtime: {$game["play_time"]}h</span>
+                                    <div class='game__actions'>
+                                        <a href='deleteGameUser.php?gameID={$game['game_id']}' class='remove-game-btn'>
+                                            <i class='fa fa-trash'></i> Remove from Library
+                                        </a>
+                                        <button class='edit-stats-btn' onclick='openGameStats()'>
+                                            <i class='fa fa-edit'></i> Edit Game Stats
+                                        </button>
                                     </div>
-                                    <div class='game__stat'>
-                                        <i class='fa fa-gamepad'></i>
-                                        <span>Status: {$game["game_status"]}</span>
-                                    </div>
-                                    <a href='deleteGameUser.php?gameID={$game['game_id']}'>
-                                    <button class='remove-game-btn'>
-                                        <i class='fa fa-trash'></i> Remove from Library
-                                    </button>
-                                    </a>
                                 </div>
                             </div>
                             <div class='product__item__text'>
@@ -277,13 +293,19 @@ class Rendering extends connection
         }
 
         $AddToLibraryCheck = '';
-        if ($isthere["user_role"] === "player") {
+        if (empty($isthere)) {
             $AddToLibraryCheck = "<div class='anime__details__btn'>
-                                <a href='#' class='follow-btn'><i class='fa fa-plus'></i> Add to Library</a>
+                                <a href='login.php' class='watch-btn'><span>Login</span> <i
+                                        class='fa fa-angle-right'></i></a>
+                            </div>";
+        }
+        else if ($isthere["user_role"] === "player") {
+            $AddToLibraryCheck = "<div class='anime__details__btn'>
+                                <a href='AddToUserLib.php?GameID={$detail["game_id"]}' class='follow-btn'><i class='fa fa-plus'></i> Add to Library</a>
                                 <a href='dashboard.php' class='watch-btn'><span>See in Dashboard</span> <i
                                         class='fa fa-angle-right'></i></a>
                             </div>";
-        } else {
+        }else {
             $AddToLibraryCheck = "<div class='anime__details__btn'>
                                 <a href='admin_dashboard.php' class='watch-btn'><span>See in Dashboard</span> <i
                                         class='fa fa-angle-right'></i></a>
@@ -358,6 +380,31 @@ class Rendering extends connection
         }
         echo "</div>
             </div>";
+    }
+
+
+    public function showHistorique()
+    {
+        $stmt = "SELECT * from user_history where user_id = :user_id;";
+        $ShowHist = $this->conn->prepare($stmt);
+        $ShowHist->bindParam(":user_id", $_SESSION["user_id"]);
+        $ShowHist->execute();
+        $Histories = $ShowHist->fetchAll();
+
+        foreach ($Histories as $history) {
+            echo "<div class='history-item'>
+                            <div class='history-item-icon'>
+                                <i class='fa fa-gamepad'></i>
+                            </div>
+                            <div class='history-item-details'>
+                                <div class='history-item-title'>{$history["game_title"]}</div>
+                                <div class='history-item-date'>
+                                    <i class='fa fa-clock-o'></i>
+                                    Added at: {$history["history_date"]}
+                                </div>
+                            </div>
+                        </div>";
+        }
     }
 }
 
@@ -601,10 +648,42 @@ class admin extends connection
 class UserLibrary extends connection
 {
     public function DeleteGame($game_id)
-{
+    {
         $stmt = "DELETE from user_library where game_id = :game_id";
-	$deleteQu = $this->conn->prepare($stmt);
+        $deleteQu = $this->conn->prepare($stmt);
         $deleteQu->bindParam(":game_id", $game_id);
         $deleteQu->execute();
+    }
+
+    public function AddGameToLib($game_id, $User_id)
+    {
+        $checkStmt = "SELECT count(*) from user_library where user_id = :user_id and game_id = :game_id";
+        $sendCheck = $this->conn->prepare($checkStmt);
+        $sendCheck->bindParam(":user_id", $User_id);
+        $sendCheck->bindParam(":game_id", $game_id);
+        $sendCheck->execute();
+        $GameAlr = $sendCheck->fetchColumn();
+
+
+        $getTitle = "SELECT game_title from game where game_id = :game_id";
+        $GET = $this->conn->prepare($getTitle);
+        $GET->bindParam(":game_id", $game_id);
+        $GET->execute();
+        $TitleRestore = $GET->fetchColumn();
+
+        if ($GameAlr == 0) {
+            $stmt = "INSERT INTO user_library (game_id,user_id) values (:game_id,:user_id)";
+            $AddToLib = $this->conn->prepare($stmt);
+            $AddToLib->bindParam(":game_id", $game_id);
+            $AddToLib->bindParam(":user_id", $User_id);
+            $AddToLib->execute();
+
+            $HistoryStmt = "INSERT into user_history (game_id,user_id,game_title) values (:game_id , :user_id, :game_title)";
+            $AddToHistory = $this->conn->prepare($HistoryStmt);
+            $AddToHistory->bindParam(":game_id", $game_id);
+            $AddToHistory->bindParam(":user_id", $User_id);
+            $AddToHistory->bindParam(":game_title", $TitleRestore);
+            $AddToHistory->execute();
+        }
     }
 }

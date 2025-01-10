@@ -25,7 +25,7 @@
     if (!isset($_SESSION["username"])) {
         header("location: index.php");
     }
-    if($_SESSION["user_role"] === "admin"){
+    if ($_SESSION["user_role"] === "admin") {
         header("location: admin_dashboard.php");
     }
 
@@ -95,20 +95,8 @@
                         <p>Your recently visited games</p>
                     </div>
                     <div class="history-list">
-                        <!-- Hardcoded Example -->
-                        <div class="history-item">
-                            <div class="history-item-icon">
-                                <i class="fa fa-gamepad"></i>
-                            </div>
-                            <div class="history-item-details">
-                                <div class="history-item-title">The Last of Us Part II</div>
-                                <div class="history-item-date">
-                                    <i class="fa fa-clock-o"></i>
-                                    Last visited: March 15, 2024
-                                </div>
-                                <a href="#" class="history-item-link">View Game Details <i class="fa fa-arrow-right"></i></a>
-                            </div>
-                        </div>
+                        <?php $newHistory = new Rendering();
+                        $newHistory->showHistorique(); ?>
                     </div>
                 </div>
             </div>
@@ -122,6 +110,35 @@
     </div>
 
     <?php include "footer.php"; ?>
+
+    <div class="game-stats-modal" id="gameStatsModal">
+        <div class="game-stats-form">
+            <h3>Update Game Stats</h3>
+            <form action="PersonalStats.php" method="POST">
+                <input type="hidden" id="gameId" name="gameId">
+                <div class="form-group">
+                    <label for="personalScore">Personal Score</label>
+                    <input type="number" id="personalScore" name="personalScore" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="playTime">Play Time (hours)</label>
+                    <input type="number" id="playTime" name="playTime" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="gameStatus">Status</label>
+                    <select id="gameStatus" name="gameStatus" required>
+                        <option value="in-progress">In Progress</option>
+                        <option value="finished">Finished</option>
+                        <option value="abandoned">Abandoned</option>
+                    </select>
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="cancel-btn" onclick="closeGameStats()">Cancel</button>
+                    <button type="submit" class="save-btn" name="update_stats">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <script>
         function showSection(section) {
@@ -137,6 +154,14 @@
 
         // Show the welcome section by default
         showSection('welcome');
+
+        function openGameStats() {
+            document.getElementById('gameStatsModal').classList.add('active');
+        }
+
+        function closeGameStats() {
+            document.getElementById('gameStatsModal').classList.remove('active');
+        }
     </script>
 </body>
 

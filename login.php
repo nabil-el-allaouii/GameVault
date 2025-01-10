@@ -11,8 +11,8 @@ if (isset($_POST['login'])) {
     $password = htmlspecialchars(trim($_POST['password']));
 
     if ($login->login($email, $password)) {
-       // Redirection handled in the login method
-    } else{
+        // Redirection handled in the login method
+    } else {
         $msg_error = $login->login_error;
     }
 }
@@ -57,7 +57,12 @@ if (isset($_POST['login'])) {
     <!-- Header End -->
 
     <!-- Normal Breadcrumb Begin -->
-    <section class="normal-breadcrumb set-bg" data-setbg="img/normal-breadcrumb.jpg">
+    <section class="normal-breadcrumb set-bg">
+        <div class="video-background">
+            <video autoplay muted loop playsinline>
+                <source src="videos/background.mp4" type="video/mp4">
+            </video>
+        </div>
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
@@ -79,11 +84,11 @@ if (isset($_POST['login'])) {
                     <div class="login__form">
                         <h3>Login</h3>
 
-                           <!-- Display error message -->
-                            <?php if (!empty($msg_error)): ?>
-                                <p style="color: red;"><?= htmlspecialchars($msg_error); ?></p>
-                            <?php endif; ?>
-                            
+                        <!-- Display error message -->
+                        <?php if (!empty($msg_error)): ?>
+                            <p style="color: red;"><?= htmlspecialchars($msg_error); ?></p>
+                        <?php endif; ?>
+
                         <form action="login.php" method="post">
                             <div class="input__item">
                                 <input type="text" name="email" placeholder="Email address">

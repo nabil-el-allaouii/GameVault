@@ -5,12 +5,12 @@ require_once 'classes.php';
 $register = new register();
 $msg_error = "";
 
-if(isset($_POST['register'])){
+if (isset($_POST['register'])) {
     $username = htmlspecialchars(trim($_POST['username']));
     $email = htmlspecialchars(trim($_POST['email']));
     $password = htmlspecialchars(trim($_POST['password']));
     $confirmPassword = htmlspecialchars(trim($_POST['confirmPassword']));
-        
+
     if ($register->registerUser($username, $email, $password, $confirmPassword)) {
         header('Location: login.php');
         exit();
@@ -54,14 +54,19 @@ if(isset($_POST['register'])){
 </head>
 
 <body>
- 
+
 
     <!-- Header Section Begin -->
     <?php include "header.php" ?>
     <!-- Header End -->
 
     <!-- Normal Breadcrumb Begin -->
-    <section class="normal-breadcrumb set-bg" data-setbg="img/normal-breadcrumb.jpg">
+    <section class="normal-breadcrumb">
+        <div class="video-background">
+            <video autoplay muted loop playsinline>
+                <source src="videos/background.mp4" type="video/mp4">
+            </video>
+        </div>
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
@@ -82,11 +87,11 @@ if(isset($_POST['register'])){
                 <div class="col-lg-6">
                     <div class="login__form">
                         <h3>Sign Up</h3>
-                        
-                          <!-- Display error message -->
-                    <?php if (!empty($msg_error)): ?>
-                        <p style="color: red;"><?= htmlspecialchars($msg_error); ?></p>
-                    <?php endif; ?>
+
+                        <!-- Display error message -->
+                        <?php if (!empty($msg_error)): ?>
+                            <p style="color: red;"><?= htmlspecialchars($msg_error); ?></p>
+                        <?php endif; ?>
 
                         <form action="signup.php" method="post">
                             <div class="input__item">
@@ -98,7 +103,7 @@ if(isset($_POST['register'])){
                                 <span class="icon_profile"></span>
                             </div>
                             <div class="input__item">
-                                <input type="password"" name="password" placeholder="Password">
+                                <input type="password"" name=" password" placeholder="Password">
                                 <span class="icon_lock"></span>
                             </div>
                             <div class="input__item">

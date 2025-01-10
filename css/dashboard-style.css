@@ -262,45 +262,86 @@ label {
     background: rgba(0, 0, 0, 0.8);
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    justify-content: space-between;
     opacity: 0;
     transition: opacity 0.3s ease;
+    padding: 20px;
 }
 
 .product__item__pic:hover .game__details__overlay {
     opacity: 1;
 }
 
+.game__stats {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
 .game__stat {
-    color: white;
-    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #ffffff;
     font-size: 14px;
 }
 
 .game__stat i {
-    margin-right: 8px;
     color: #e53637;
 }
 
+.game__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    align-items: center;
+}
+
 .remove-game-btn {
-    background: #e53637;
+    background: rgba(229, 54, 55, 0.9);
     color: #ffffff;
     border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
+    padding: 6px 12px;
+    border-radius: 4px;
     cursor: pointer;
-    margin-top: 15px;
-    font-size: 14px;
+    font-size: 12px;
     transition: background 0.3s ease;
+    text-align: center;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: auto;
+    margin: 0 auto;
+}
+
+.edit-stats-btn {
+    background: rgba(0, 123, 255, 0.9);
+    color: #ffffff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background 0.3s ease;
+    text-align: center;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: auto;
+    margin: 0 auto;
 }
 
 .remove-game-btn:hover {
     background: #d52c2c;
 }
 
-.remove-game-btn i {
-    margin-right: 5px;
+.edit-stats-btn:hover {
+    background: #0056b3;
 }
 
 /* Add these new styles for the create game form */
@@ -631,4 +672,102 @@ input[type="date"]::placeholder {
     outline: none;
     border-color: #0066ff;
     box-shadow: 0 0 5px rgba(0, 102, 255, 0.5);
+}
+
+/* Game Stats Modal */
+.game-stats-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.game-stats-modal.active {
+    display: flex;
+}
+
+.game-stats-form {
+    background: #1a1a2e;
+    padding: 30px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.game-stats-form h3 {
+    color: #ffffff;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 24px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #ffffff;
+    font-size: 14px;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #444;
+    background: #0b0c2a;
+    color: #ffffff;
+    font-size: 14px;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #e53637;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 25px;
+}
+
+.modal-buttons button {
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background 0.3s ease;
+    flex: 1;
+}
+
+.save-btn {
+    background: #e53637;
+    color: #ffffff;
+}
+
+.save-btn:hover {
+    background: #d52c2c;
+}
+
+.cancel-btn {
+    background: #2d2d42;
+    color: #ffffff;
+}
+
+.cancel-btn:hover {
+    background: #3d3d52;
 }
