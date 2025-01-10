@@ -79,6 +79,7 @@ class login extends connection
                 $_SESSION['username'] = $user['username'];
                 $_SESSION['user_id'] = $user['user_id'];
                 $_SESSION['user_role'] = $user['user_role'];
+                $_SESSION["user_status"] = $user["banned"];
 
                 // if the user role is admin
                 if ($user['user_role'] === 'admin') {
@@ -542,9 +543,11 @@ class admin extends connection
         $ShowStmt = $this->conn->prepare($stmt);
         $ShowStmt->execute();
         $players = $ShowStmt->fetchAll();
-
-        foreach ($players as $user) {
-            echo '<div class="user-item">
+        if (empty($players)) {
+            echo "There is no players";
+        } else {
+            foreach ($players as $user) {
+                echo '<div class="user-item">
                     <div class="user-info">
                         <img src="' . htmlspecialchars($user['profile_pic']) . '" class="user-avatar">
                         <div class="user-details">
@@ -555,6 +558,7 @@ class admin extends connection
                         <a href="ban_user.php?id=' . $user['user_id'] . '" class="action-btn">Ban user</a>
                     </div>
                 </div>';
+            }
         }
     }
 
@@ -601,10 +605,60 @@ class admin extends connection
 class UserLibrary extends connection
 {
     public function DeleteGame($game_id)
-{
+    {
         $stmt = "DELETE from user_library where game_id = :game_id";
-	$deleteQu = $this->conn->prepare($stmt);
+        $deleteQu = $this->conn->prepare($stmt);
         $deleteQu->bindParam(":game_id", $game_id);
         $deleteQu->execute();
+    }
+}
+
+class Chat extends connection
+{
+
+
+    public function sendMessage($game_id, $user_id, $content)
+    {
+        if (empty($content)) {
+            return false;
+        }
+
+        $stmt = "INSERT INTO chat (game_id, user_id, chat_content) 
+                VALUES (:game_id, :user_id, :content)";
+
+        $query = $this->conn->prepare($stmt);
+        $query->bindParam(":game_id", $game_id);
+        $query->bindParam(":user_id", $user_id);
+        $query->bindParam(":content", $content);
+        return $query->execute();
+    }
+
+    public function getMessages($game_id)
+    {
+        $stmt = "SELECT chat.*, users.username, users.profile_pic FROM chat 
+                JOIN users ON chat.user_id = users.user_id 
+                WHERE chat.game_id = :game_id 
+                ORDER BY chat.sent_at DESC";
+
+        $query = $this->conn->prepare($stmt);
+        $query->bindParam(":game_id", $game_id);
+        $query->execute();
+
+        $msgs = $query->fetchAll();
+        $msgs = array_reverse($msgs);   
+
+
+        foreach ($msgs as $msg) {
+            echo '<div class="chat-message">
+                    <img src="' . htmlspecialchars($msg['profile_pic']) . '" alt="User 1" class="chat-avatar">
+                    <div class="message-content">
+                        <div class="message-info">
+                            <span class="username">' . htmlspecialchars($msg['username']) . '</span>
+                            <span class="time">' . htmlspecialchars($msg['sent_at']) . '</span>
+                        </div>
+                        <p>' . htmlspecialchars($msg['chat_content']) . '</p>
+                    </div>
+                </div>';
+        }
     }
 }
