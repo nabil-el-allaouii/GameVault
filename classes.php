@@ -277,13 +277,13 @@ class Rendering extends connection
 
     public function ShowGameDetails($gameID)
     {
-        $stmt = "SELECT * from game where game_id = :game_id";
+        $stmt = "SELECT game.*, avg(review.review_score) as rating FROM game left join review on review.game_id = game.game_id where game.game_id = :game_id";
         $DetailQuery = $this->conn->prepare($stmt);
         $DetailQuery->bindParam(":game_id", $gameID);
         $DetailQuery->execute();
         $detail = $DetailQuery->fetch();
 
-        $checkstmt = "select user_role from users where user_id = :user_id";
+        $checkstmt = "SELECT user_role from users where user_id = :user_id";
         $checking = $this->conn->prepare($checkstmt);
         $checking->bindParam(":user_id", $_SESSION["user_id"]);
         $checking->execute();
@@ -344,7 +344,7 @@ class Rendering extends connection
                                         <ul>
                                             <li><span>Date aired:</span>{$detail["game_release"]}</li>
                                             <li><span>Genre:</span>{$detail["game_genre"]}</li>
-                                            <li><span>Rating:</span> {$detail["average_score"]} / 10</li>
+                                            <li><span>Rating:</span> ".(!is_null($detail["rating"]) ? ($detail["rating"]) : "0") ." / 5</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -415,7 +415,7 @@ class admin extends connection
 {
     public function showAllGames()
     {
-        $stmt = "SELECT * FROM game";
+        $stmt = "SELECT game.*, avg(review.review_score) as rating FROM game left join review on review.game_id = game.game_id group by game.game_id";
         $ShowStmt = $this->conn->prepare($stmt);
         $ShowStmt->execute();
         $AllGames = $ShowStmt->fetchAll();
@@ -428,7 +428,7 @@ class admin extends connection
                         <input type="hidden" name="game_id" value="' . $game['game_id'] . '">
                         <div class="product__item__pic set-bg">
                             <img src="' . $game['game_pic'] . '">
-                            <div class="ep">18 / 18</div>
+                            <div class="ep">'.(!is_null($game["rating"]) ? ($game["rating"]) : "0").' / 5</div>
                             <div class="comment"><i class="fa fa-comments"></i> 11</div>
                             <div class="view"><i class="fa fa-eye"></i> 9141</div>
                         </div>
@@ -746,9 +746,10 @@ class Chat extends connection
 
 class review extends connection {
     public function SubmitReview($review_content, $review_score,$UserID,$gameID){
-        $checkStmt = "SELECT count(*) from review where user_id = :user_id";
+        $checkStmt = "SELECT count(*) from review where user_id = :user_id and game_id = :game_id";
         $checksend = $this->conn->prepare($checkStmt);
         $checksend->bindParam(":user_id", $UserID);
+        $checksend->bindParam(":game_id", $gameID);
         $checksend->execute();
         $AlrReviewed = $checksend->fetchColumn();
 
