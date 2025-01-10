@@ -742,3 +742,43 @@ class Chat extends connection
         }
     }
 }
+
+
+class review extends connection {
+    public function SubmitReview($review_content, $review_score,$UserID,$gameID){
+        $checkStmt = "SELECT count(*) from review where user_id = :user_id";
+        $checksend = $this->conn->prepare($checkStmt);
+        $checksend->bindParam(":user_id", $UserID);
+        $checksend->execute();
+        $AlrReviewed = $checksend->fetchColumn();
+
+        if($AlrReviewed === 0 && $_SESSION["user_status"] !== "banned"){
+            $stmt = "INSERT into review (review_content, review_score,user_id,game_id) values(:review_content, :review_score,:user_id,:game_id)";
+            $submitStmt = $this->conn->prepare($stmt);
+            $submitStmt->bindParam(":review_content",$review_content);
+            $submitStmt->bindParam(":review_score",$review_score);
+            $submitStmt->bindParam(":user_id",$UserID);
+            $submitStmt->bindParam(":game_id",$gameID);
+            $submitStmt->execute();
+        }
+    }
+    public function RenderReview($gameID){
+        $stmt = "SELECT * from review join users on users.user_id = review.user_id where game_id = :game_id order by review.review_id asc";
+        $showStmt = $this->conn->prepare($stmt);
+        $showStmt->bindParam("game_id", $gameID);
+        $showStmt->execute();
+        $Reviews = $showStmt->fetchAll();
+
+        foreach($Reviews as $review){
+            echo "<div class='anime__review__item'>
+                            <div class='anime__review__item__pic'>
+                                <img src='{$review["profile_pic"]}' alt=''>
+                            </div>
+                            <div class='anime__review__item__text'>
+                                <h6>{$review["username"]} - <span class='fa fa-star'> {$review["review_score"]}.0/5</span></h6>
+                                <p>{$review["review_content"]}</p>
+                            </div>
+                </div>";
+        }
+    }
+}

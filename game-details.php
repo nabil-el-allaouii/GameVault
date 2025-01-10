@@ -1,6 +1,10 @@
 <?php
 require_once "classes.php";
 
+if (!isset($_GET["Game_id"])) {
+    header("location: index.php");
+}
+
 if (isset($_POST['send_message']) && isset($_SESSION['user_id'])) {
     $chat = new Chat();
     $chat->sendMessage($_GET['Game_id'], $_SESSION['user_id'], $_POST['chat_content']);
@@ -79,34 +83,44 @@ if (isset($_POST['send_message']) && isset($_SESSION['user_id'])) {
                         <div class="section-title">
                             <h5>Reviews</h5>
                         </div>
-                        <div class="anime__review__item">
-                            <div class="anime__review__item__pic">
-                                <img src="img/anime/review-1.jpg" alt="">
-                            </div>
-                            <div class="anime__review__item__text">
-                                <h6>Chris Curry - <span>0/5</span></h6>
-                                <p>whachikan Just noticed that someone categorized this as belonging to the genre
-                                    "demons" LOL</p>
-                            </div>
-                        </div>
+                        <!-- here -->
+                        <?php $reviewRender = new review();
+                        $reviewRender->RenderReview($_GET["Game_id"]);
+                        ?>
 
                     </div>
                     <div class="anime__details__form">
-                        <div class="section-title">
-                            <h5>Your Comment</h5>
-                        </div>
-                        <form method="POST">
-                            <textarea name="comment" placeholder="Your Comment" required></textarea>
-                            <select name="rating" required class="rating-select">
-                                <option value="" disabled selected>Select Rating /5</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                            </select>
-                            <button type="submit" name="submit_review"><i class="fa fa-location-arrow"></i> Review</button>
-                        </form>
+                        <?php if (!isset($_SESSION["user_status"])) : ?>
+                            <div class="review-message review-login-required">
+                                <i class="fa fa-lock"></i>
+                                <p>Please <a href="login.php">login</a> to write a review</p>
+                            </div>
+                        <?php elseif ($_SESSION["user_status"] !== "banned" && $_SESSION["user_role"] === "player"): ?>
+                            <div class="section-title">
+                                <h5>Your Review</h5>
+                            </div>
+                            <form method="POST" action="SendReview.php">
+                                <input name="gameID" type="hidden" value="<?php echo $_GET["Game_id"]; ?>">
+                                <textarea name="comment" placeholder="Your Comment" required></textarea>
+                                <select name="rating" required class="rating-select">
+                                    <option value="" disabled selected>Select Rating /5</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                                <button type="submit" name="submit_review"><i class="fa fa-location-arrow"></i> Review</button>
+                            </form>
+                        <?php elseif ($_SESSION["user_role"] === "admin"): ?>
+
+                        <?php else: ?>
+                            <div class="review-message review-banned">
+                                <i class="fa fa-ban"></i>
+                                <p>You are banned from reviewing!</p>
+                            </div>
+                        <?php endif ?>
+
                     </div>
 
                     <!-- //chat -->
