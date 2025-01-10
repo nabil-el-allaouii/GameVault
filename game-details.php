@@ -1,6 +1,12 @@
 <?php
+require_once "classes.php";
 
-
+if (isset($_POST['send_message']) && isset($_SESSION['user_id'])) {
+    $chat = new Chat();
+    $chat->sendMessage($_GET['Game_id'], $_SESSION['user_id'], $_POST['chat_content']);
+    header("Location: game-details.php?Game_id=" . $_GET['Game_id']);
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -28,6 +34,7 @@
     <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css">
     <link rel="stylesheet" href="css/slicknav.min.css" type="text/css">
     <link rel="stylesheet" href="css/style.css" type="text/css">
+    <link rel="stylesheet" href="css/game_details_style.css" type="text/css">
 </head>
 
 <body>
@@ -57,7 +64,6 @@
         <div class="container">
             <?php
             require_once "database.php";
-            require_once "classes.php";
 
             $gameidGet = $_GET["Game_id"];
             $gameDetails = new Rendering();
@@ -65,7 +71,7 @@
 
             $GetScreens = $gameDetails->ShowScreens($gameidGet);
             ?>
-            
+
 
             <div class="row">
                 <div class="col-lg-8 col-md-8">
@@ -78,92 +84,65 @@
                                 <img src="img/anime/review-1.jpg" alt="">
                             </div>
                             <div class="anime__review__item__text">
-                                <h6>Chris Curry - <span>1 Hour ago</span></h6>
+                                <h6>Chris Curry - <span>0/5</span></h6>
                                 <p>whachikan Just noticed that someone categorized this as belonging to the genre
                                     "demons" LOL</p>
                             </div>
                         </div>
-                        <div class="anime__review__item">
-                            <div class="anime__review__item__pic">
-                                <img src="img/anime/review-2.jpg" alt="">
-                            </div>
-                            <div class="anime__review__item__text">
-                                <h6>Lewis Mann - <span>5 Hour ago</span></h6>
-                                <p>Finally it came out ages ago</p>
-                            </div>
-                        </div>
-                        <div class="anime__review__item">
-                            <div class="anime__review__item__pic">
-                                <img src="img/anime/review-3.jpg" alt="">
-                            </div>
-                            <div class="anime__review__item__text">
-                                <h6>Louis Tyler - <span>20 Hour ago</span></h6>
-                                <p>Where is the episode 15 ? Slow update! Tch</p>
-                            </div>
-                        </div>
-                        <div class="anime__review__item">
-                            <div class="anime__review__item__pic">
-                                <img src="img/anime/review-4.jpg" alt="">
-                            </div>
-                            <div class="anime__review__item__text">
-                                <h6>Chris Curry - <span>1 Hour ago</span></h6>
-                                <p>whachikan Just noticed that someone categorized this as belonging to the genre
-                                    "demons" LOL</p>
-                            </div>
-                        </div>
-                        <div class="anime__review__item">
-                            <div class="anime__review__item__pic">
-                                <img src="img/anime/review-5.jpg" alt="">
-                            </div>
-                            <div class="anime__review__item__text">
-                                <h6>Lewis Mann - <span>5 Hour ago</span></h6>
-                                <p>Finally it came out ages ago</p>
-                            </div>
-                        </div>
-                        <div class="anime__review__item">
-                            <div class="anime__review__item__pic">
-                                <img src="img/anime/review-6.jpg" alt="">
-                            </div>
-                            <div class="anime__review__item__text">
-                                <h6>Louis Tyler - <span>20 Hour ago</span></h6>
-                                <p>Where is the episode 15 ? Slow update! Tch</p>
-                            </div>
-                        </div>
+
                     </div>
                     <div class="anime__details__form">
                         <div class="section-title">
                             <h5>Your Comment</h5>
                         </div>
-                        <form action="#">
-                            <textarea placeholder="Your Comment"></textarea>
-                            <button type="submit"><i class="fa fa-location-arrow"></i> Review</button>
+                        <form method="POST">
+                            <textarea name="comment" placeholder="Your Comment" required></textarea>
+                            <select name="rating" required class="rating-select">
+                                <option value="" disabled selected>Select Rating /5</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                            <button type="submit" name="submit_review"><i class="fa fa-location-arrow"></i> Review</button>
                         </form>
                     </div>
+
+                    <!-- //chat -->
                 </div>
                 <div class="col-lg-4 col-md-4">
                     <div class="anime__details__sidebar">
                         <div class="section-title">
-                            <h5>you might like...</h5>
+                            <h5>Chat Room</h5>
                         </div>
-                        <div class="product__sidebar__view__item set-bg" data-setbg="img/sidebar/tv-1.jpg">
-                            <div class="ep">18 / ?</div>
-                            <div class="view"><i class="fa fa-eye"></i> 9141</div>
-                            <h5><a href="#">Boruto: Naruto next generations</a></h5>
-                        </div>
-                        <div class="product__sidebar__view__item set-bg" data-setbg="img/sidebar/tv-2.jpg">
-                            <div class="ep">18 / ?</div>
-                            <div class="view"><i class="fa fa-eye"></i> 9141</div>
-                            <h5><a href="#">The Seven Deadly Sins: Wrath of the Gods</a></h5>
-                        </div>
-                        <div class="product__sidebar__view__item set-bg" data-setbg="img/sidebar/tv-3.jpg">
-                            <div class="ep">18 / ?</div>
-                            <div class="view"><i class="fa fa-eye"></i> 9141</div>
-                            <h5><a href="#">Sword art online alicization war of underworld</a></h5>
-                        </div>
-                        <div class="product__sidebar__view__item set-bg" data-setbg="img/sidebar/tv-4.jpg">
-                            <div class="ep">18 / ?</div>
-                            <div class="view"><i class="fa fa-eye"></i> 9141</div>
-                            <h5><a href="#">Fate/stay night: Heaven's Feel I. presage flower</a></h5>
+                        <div class="chat-container">
+                            <div class="chat-messages">
+                                <?php
+                                $chat = new Chat();
+                                echo $chat->getMessages($_GET['Game_id']);
+                                ?>
+                            </div>
+
+                            <?php
+                            if (!isset($_SESSION['user_id'])): ?>
+                                <div class="chat-login-prompt">
+                                    <p>Please <a href="login.php">login</a> to join the chat</p>
+                                </div>
+                            <?php
+                            elseif (isset($_SESSION['user_status']) && $_SESSION['user_status'] === 'banned'): ?>
+                                <div class="chat-banned-message">
+                                    <i class="fa fa-ban"></i>
+                                    <p>You are banned from chatting!</p>
+                                </div>
+
+                            <?php
+                            else: ?>
+                                <form method="POST" class="chat-input">
+                                    <input type="text" name="chat_content" placeholder="Type your message..." required>
+                                    <button type="submit" name="send_message"><i class="fa fa-paper-plane"></i></button>
+                                </form>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -217,6 +196,9 @@
                 });
             });
         });
+
+        var objDiv = document.querySelector(".chat-messages");
+        objDiv.scrollTop = objDiv.scrollHeight;
     </script>
 
 </body>

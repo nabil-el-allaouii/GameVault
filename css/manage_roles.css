@@ -142,7 +142,7 @@
     height: 40px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid #e53637;
+    border: 1px solid #ffffff;
 }
 
 .user-details h4 {
