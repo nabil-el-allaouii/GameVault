@@ -41,6 +41,7 @@
             <nav>
                 <ul>
                     <li><a href="#" onclick="showSection('library')">Library</a></li>
+                    <li><a href="#" onclick="showSection('favorites')">Favorites</a></li>
                     <li><a href="#" onclick="showSection('profile')">Profile</a></li>
                     <li><a href="#" onclick="showSection('history')">History</a></li>
                     <li><a href="logout.php">Logout</a></li>
@@ -68,6 +69,31 @@
                                 </div>
                                 <?php $avail = new Rendering();
                                 $showAv = $avail->showGames();  ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="favorites" class="content-section" style="display: none;">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="trending__product">
+                                <div class="row">
+                                    <div class="col-lg-8 col-md-8 col-sm-8">
+                                        <div class="section-title">
+                                            <h4>Your favorite Games</h4>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 col-md-4 col-sm-4">
+                                        <div class="btn__all">
+                                            <a href="#" class="primary-btn">View All <span class="arrow_right"></span></a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php $favorites = new UserLibrary();
+                                $favorites->showFavorites($_SESSION["user_id"]);  ?>
                             </div>
                         </div>
                     </div>

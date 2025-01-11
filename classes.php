@@ -209,7 +209,14 @@ class Rendering extends connection
 {
     public function showGames()
     {
-        $stmt = "SELECT * FROM user_library JOIN game ON user_library.game_id = game.game_id WHERE user_library.user_id = :user_id";
+        $stmt = "SELECT game.*, user_library.personal_score, user_library.play_time, user_library.game_status, 
+                AVG(review.review_score) as rating 
+                FROM user_library 
+                JOIN game ON user_library.game_id = game.game_id 
+                LEFT JOIN review ON game.game_id = review.game_id 
+                WHERE user_library.user_id = :user_id 
+                GROUP BY game.game_id";
+
         $ShowStmt = $this->conn->prepare($stmt);
         $ShowStmt->bindParam(":user_id", $_SESSION["user_id"]);
         $ShowStmt->execute();
@@ -222,7 +229,7 @@ class Rendering extends connection
                         <div class='product__item'>
                             <div class='product__item__pic set-bg'>
                                 <img src='{$game["game_pic"]}' alt=''>
-                                <div class='ep'>18 / 18</div>
+                                <div class='ep'>" . (isset($game["rating"]) && !is_null($game["rating"]) ? $game["rating"] : "0") . " / 5</div>
                                 <div class='comment'><i class='fa fa-comments'></i> 11</div>
                                 <div class='view'><i class='fa fa-eye'></i> 9141</div>
                                 <div class='game__details__overlay'>
@@ -299,14 +306,13 @@ class Rendering extends connection
                                 <a href='login.php' class='watch-btn'><span>Login</span> <i
                                         class='fa fa-angle-right'></i></a>
                             </div>";
-        }
-        else if ($isthere["user_role"] === "player") {
+        } else if ($isthere["user_role"] === "player") {
             $AddToLibraryCheck = "<div class='anime__details__btn'>
-                                <a href='AddToUserLib.php?GameID={$detail["game_id"]}' class='follow-btn'><i class='fa fa-plus'></i> Add to Library</a>
-                                <a href='dashboard.php' class='watch-btn'><span>See in Dashboard</span> <i
+                                <a href='addToFavorites.php?GameID={$detail["game_id"]}' class='follow-btn'><i class='fa fa-plus'></i>Add to Favorites</a>
+                                <a href='AddToUserLib.php?GameID={$detail["game_id"]}' class='watch-btn'><span>Add to Library</span> <i
                                         class='fa fa-angle-right'></i></a>
                             </div>";
-        }else {
+        } else {
             $AddToLibraryCheck = "<div class='anime__details__btn'>
                                 <a href='admin_dashboard.php' class='watch-btn'><span>See in Dashboard</span> <i
                                         class='fa fa-angle-right'></i></a>
@@ -344,7 +350,7 @@ class Rendering extends connection
                                         <ul>
                                             <li><span>Date aired:</span>{$detail["game_release"]}</li>
                                             <li><span>Genre:</span>{$detail["game_genre"]}</li>
-                                            <li><span>Rating:</span> ".(!is_null($detail["rating"]) ? ($detail["rating"]) : "0") ." / 5</li>
+                                            <li><span>Rating:</span> " . (!is_null($detail["rating"]) ? ($detail["rating"]) : "0") . " / 5</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -428,7 +434,7 @@ class admin extends connection
                         <input type="hidden" name="game_id" value="' . $game['game_id'] . '">
                         <div class="product__item__pic set-bg">
                             <img src="' . $game['game_pic'] . '">
-                            <div class="ep">'.(!is_null($game["rating"]) ? ($game["rating"]) : "0").' / 5</div>
+                            <div class="ep">' . (!is_null($game["rating"]) ? ($game["rating"]) : "0") . ' / 5</div>
                             <div class="comment"><i class="fa fa-comments"></i> 11</div>
                             <div class="view"><i class="fa fa-eye"></i> 9141</div>
                         </div>
@@ -691,6 +697,104 @@ class UserLibrary extends connection
             $AddToHistory->execute();
         }
     }
+
+    public function addToFavorites($game_id, $user_id)
+    {
+        $checkStmt = "SELECT COUNT(*) FROM user_library WHERE game_id = :game_id AND user_id = :user_id";
+
+        $check = $this->conn->prepare($checkStmt);
+        $check->bindParam(":game_id", $game_id);
+        $check->bindParam(":user_id", $user_id);
+        $check->execute();
+
+        if ($check->fetchColumn() > 0) {
+            $stmt = "UPDATE user_library SET favorite = 'favorite' WHERE game_id = :game_id AND user_id = :user_id";
+        } else {
+            $stmt = "INSERT INTO user_library (game_id, user_id, favorite) 
+                    VALUES (:game_id, :user_id, 'favorite')";
+        }
+
+        $query = $this->conn->prepare($stmt);
+        $query->bindParam(":game_id", $game_id);
+        $query->bindParam(":user_id", $user_id);
+        return $query->execute();
+    }
+
+    public function removeFromFavorites($game_id, $user_id)
+    {
+        $stmt = "UPDATE user_library 
+                SET favorite = 'notfavorite' 
+                WHERE game_id = :game_id 
+                AND user_id = :user_id";
+
+        $query = $this->conn->prepare($stmt);
+        $query->bindParam(":game_id", $game_id);
+        $query->bindParam(":user_id", $user_id);
+        return $query->execute();
+    }
+
+    public function showFavorites($user_id)
+    {
+        $query = "SELECT game.*, user_library.personal_score, user_library.play_time, user_library.game_status 
+                  FROM user_library 
+                  JOIN game ON user_library.game_id = game.game_id 
+                  WHERE user_library.favorite = 'favorite' 
+                  AND user_library.user_id = :user_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":user_id", $user_id);
+        $stmt->execute();
+        $favorites = $stmt->fetchAll();
+
+        if (is_array($favorites) && !empty($favorites)) {
+            echo "<div class='row'>";
+            foreach ($favorites as $favorite) {
+                echo "<div class='col-lg-4 col-md-6 col-sm-6'>
+                        <div class='product__item'>
+                            <div class='product__item__pic set-bg'>
+                                <img src='{$favorite["game_pic"]}' alt=''>
+                                <i class='fa fa-heart' style='color: red; position: absolute; top: 2px; left: 2px; background-color: white; border-radius: 50%; padding: 5px;'></i>
+                                <div class='comment'><i class='fa fa-comments'></i> 11</div>
+                                <div class='view'><i class='fa fa-eye'></i> 9141</div>
+                                <div class='game__details__overlay'>
+                                    <div class='game__stats'>
+                                        <div class='game__stat'>
+                                            <i class='fa fa-star'></i>
+                                            <span>Personal Score: {$favorite["personal_score"]}</span>
+                                        </div>
+                                        <div class='game__stat'>
+                                            <i class='fa fa-clock-o'></i>
+                                            <span>Playtime: {$favorite["play_time"]}h</span>
+                                        </div>
+                                        <div class='game__stat'>
+                                            <i class='fa fa-gamepad'></i>
+                                            <span>Status: {$favorite["game_status"]}</span>
+                                        </div>
+                                    </div>
+                                    <div class='game__actions'>
+                                        <a href='unfavorite.php?gameID={$favorite['game_id']}' class='remove-game-btn'>
+                                            <i class='fa fa-trash'></i> Remove from Favorites
+                                        </a>
+                                        <button class='edit-stats-btn' onclick='openGameStats()'>
+                                            <i class='fa fa-edit'></i> Edit Game Stats
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class='product__item__text'>
+                                <ul>
+                                    <li>{$favorite["game_genre"]}</li>
+                                    <li>Movie</li>
+                                </ul>
+                                <h5><a href='game-details.php?Game_id={$favorite['game_id']}'>{$favorite["game_title"]}</a></h5>
+                            </div>
+                        </div>
+                    </div>";
+            }
+            echo "</div>";
+        } else {
+            echo "There are no favorite games";
+        }
+    }
 }
 
 class Chat extends connection
@@ -725,7 +829,7 @@ class Chat extends connection
         $query->execute();
 
         $msgs = $query->fetchAll();
-        $msgs = array_reverse($msgs);   
+        $msgs = array_reverse($msgs);
 
 
         foreach ($msgs as $msg) {
@@ -744,8 +848,10 @@ class Chat extends connection
 }
 
 
-class review extends connection {
-    public function SubmitReview($review_content, $review_score,$UserID,$gameID){
+class review extends connection
+{
+    public function SubmitReview($review_content, $review_score, $UserID, $gameID)
+    {
         $checkStmt = "SELECT count(*) from review where user_id = :user_id and game_id = :game_id";
         $checksend = $this->conn->prepare($checkStmt);
         $checksend->bindParam(":user_id", $UserID);
@@ -753,24 +859,25 @@ class review extends connection {
         $checksend->execute();
         $AlrReviewed = $checksend->fetchColumn();
 
-        if($AlrReviewed === 0 && $_SESSION["user_status"] !== "banned"){
+        if ($AlrReviewed === 0 && $_SESSION["user_status"] !== "banned") {
             $stmt = "INSERT into review (review_content, review_score,user_id,game_id) values(:review_content, :review_score,:user_id,:game_id)";
             $submitStmt = $this->conn->prepare($stmt);
-            $submitStmt->bindParam(":review_content",$review_content);
-            $submitStmt->bindParam(":review_score",$review_score);
-            $submitStmt->bindParam(":user_id",$UserID);
-            $submitStmt->bindParam(":game_id",$gameID);
+            $submitStmt->bindParam(":review_content", $review_content);
+            $submitStmt->bindParam(":review_score", $review_score);
+            $submitStmt->bindParam(":user_id", $UserID);
+            $submitStmt->bindParam(":game_id", $gameID);
             $submitStmt->execute();
         }
     }
-    public function RenderReview($gameID){
+    public function RenderReview($gameID)
+    {
         $stmt = "SELECT * from review join users on users.user_id = review.user_id where game_id = :game_id order by review.review_id asc";
         $showStmt = $this->conn->prepare($stmt);
         $showStmt->bindParam("game_id", $gameID);
         $showStmt->execute();
         $Reviews = $showStmt->fetchAll();
 
-        foreach($Reviews as $review){
+        foreach ($Reviews as $review) {
             echo "<div class='anime__review__item'>
                             <div class='anime__review__item__pic'>
                                 <img src='{$review["profile_pic"]}' alt=''>
